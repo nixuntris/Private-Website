@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIXUNTRIS // BLUEPRINT_LOG</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-blue: #001133;
+            --grid-color: rgba(0, 255, 255, 0.1);
+            --blueprint-line: #00ffff;
+            --text-white: #e0f7fa;
+            --accent-yellow: #fff000;
+        }
+
+        body {
+            background-color: var(--bg-blue);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--text-white);
+            font-family: 'Space Mono', monospace;
+            margin: 0;
+            padding: 2rem;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 2px solid var(--blueprint-line);
+            padding: 2rem;
+            background: rgba(0, 17, 51, 0.8);
+            position: relative;
+        }
+
+        /* Technical Header */
+        header {
+            border-bottom: 2px double var(--blueprint-line);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+        }
+
+        .back-link {
+            color: var(--accent-yellow);
+            text-decoration: none;
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; }
+        .meta-data { font-size: 0.7rem; opacity: 0.7; margin-top: 0.5rem; }
+
+        /* Blog Content */
+        .post-content { line-height: 1.6; }
+
+        /* Easy Image Container */
+        .image-block {
+            border: 1px solid var(--blueprint-line);
+            margin: 2rem 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .image-block img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            filter: cyan; /* Optional: adds a blueprint tint */
+        }
+
+        .caption {
+            font-size: 0.7rem;
+            margin-top: 10px;
+            color: var(--accent-yellow);
+            display: block;
+        }
+
+        .tech-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px dashed var(--blueprint-line);
+        }
+
+        .spec-item b { color: var(--blueprint-line); }
+
+        footer {
+            margin-top: 3rem;
+            font-size: 0.6rem;
+            text-align: center;
+            border-top: 1px solid var(--blueprint-line);
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="index.html" class="back-link"><< RETURN_TO_TERMINAL</a>
+        
+        <header>
+            <h1 id="postTitle">LOADING_DATA...</h1>
+            <div class="meta-data">
+                REF_ID: <span id="refId">0000</span> | 
+                STAMP: <span id="postDate">2026.05.11</span> | 
+                STATUS: ENCRYPTED
+            </div>
+        </header>
+
+        <article class="post-content" id="postBody">
+            </article>
+
+        <footer>
+            LIXUNTRIS // RECONSTRUCTED ENGINE LOG // UNAUTHORIZED ACCESS PROHIBITED
+        </footer>
+    </div>
+
+    <script>
+        // DATA STORAGE (Add your content here!)
+        const blogPosts = {
+            'voxel': {
+                title: "VOXEL_RASTERIZER // DEV_LOG_01",
+                ref: "VX-99",
+                date: "2026.04.20",
+                content: `
+                    <p>Initial reconstruction of the software rasterizer is complete. By utilizing 64-bit chunk addressing, we have achieved a theoretical world limit of 18 quintillion voxels.</p>
+                    
+                    <div class="image-block">
+                        <img src="https://via.placeholder.com/800x400/001133/00ffff?text=VOXEL_RENDER_SCHEAMATIC" alt="Voxel Render">
+                        <span class="caption">FIG 01: DEPTH BUFFER CALCULATION IN VOLUMETRIC SPACE</span>
+                    </div>
+
+                    <div class="tech-specs">
+                        <div class="spec-item"><b>LANGUAGE:</b> C++20</div>
+                        <div class="spec-item"><b>PARADIGM:</b> DATA-ORIENTED</div>
+                        <div class="spec-item"><b>MEMORY:</b> POOL_ALLOCATION</div>
+                        <div class="spec-item"><b>LATENCY:</b> 0.42ms</div>
+                    </div>
+
+                    <p>Next phase involves implementing Octree traversal for faster occlusion culling.</p>
+                `
+            },
+            'path-tracer': {
+                title: "PATH_TRACER // LIGHT_TRANSPORT_LOG",
+                ref: "PT-02",
+                date: "2026.05.02",
+                content: `
+                    <p>The BVH (Bounding Volume Hierarchy) structure is now stable. GPU kernels are showing a 15% increase in ray-traversal efficiency.</p>
+                    <div class="image-block">
+                        <img src="https://via.placeholder.com/800x400/001133/00ffff?text=RAY_TRAVERSAL_MAP" alt="Path Tracer">
+                        <span class="caption">FIG 02: RAY BOUNCE PROBABILITY DISTRIBUTION</span>
+                    </div>
+                `
+            }
+        };
+
+        // NAVIGATION LOGIC
+        function loadPost() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const post = blogPosts[id] || { title: "404_NOT_FOUND", content: "FILE CORRUPTED OR REMOVED." };
+
+            document.getElementById('postTitle').innerText = post.title;
+            document.getElementById('refId').innerText = post.ref || "N/A";
+            document.getElementById('postDate').innerText = post.date || "UNKNOWN";
+            document.getElementById('postBody').innerHTML = post.content;
+        }
+
+        window.onload = loadPost;
+    </script>
+</body>
+</html>

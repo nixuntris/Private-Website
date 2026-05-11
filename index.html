@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIXUNTRIS // RECONSTRUCTED</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-black: #050112;
+            --neon-magenta: #ff00ff;
+            --neon-cyan: #00ffff;
+            --neon-yellow: #fff000;
+            --white: #ffffff;
+            --border-width: 4px;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            margin: 0; padding: 2rem;
+            text-transform: uppercase;
+            font-family: 'Space Mono', monospace;
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* BACKGROUND LAYER */
+        .bg-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(to bottom, #1a012a 0%, #6e002e 40%, #8e5a00 100%);
+        }
+
+        .grid-floor {
+            position: absolute; width: 200%; height: 200%;
+            bottom: -50%; left: -50%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 255, 0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg);
+            animation: move-grid 3s linear infinite;
+        }
+
+        @keyframes move-grid { from { background-position: 0 0; } to { background-position: 0 50px; } }
+
+        .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
+
+        header {
+            border: var(--border-width) solid var(--white);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 2.5rem; margin-bottom: 3rem;
+            box-shadow: 12px 12px 0px var(--neon-magenta);
+        }
+
+        h1 { margin: 0; font-size: clamp(2.5rem, 8vw, 5rem); text-shadow: 3px 3px var(--neon-cyan); }
+        .bio { margin-top: 1rem; border-left: 5px solid var(--neon-cyan); padding-left: 1.5rem; color: #eee; }
+
+        /* SECTION LABELS */
+        .label {
+            display: inline-block; padding: 0.6rem 1.5rem; font-weight: 700;
+            margin: 3rem 0 1.5rem 0; background: var(--neon-cyan); color: #000;
+            box-shadow: 6px 6px 0px var(--neon-magenta);
+        }
+        .label.upcoming { background: var(--neon-yellow); box-shadow: 6px 6px 0px var(--neon-cyan); }
+        .label.archive { background: transparent; border: 2px solid var(--white); color: var(--white); opacity: 0.6; box-shadow: none; }
+
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; }
+
+        /* CARDS */
+        .card {
+            background: rgba(0, 0, 0, 0.95);
+            border: var(--border-width) solid var(--white);
+            padding: 1.5rem; position: relative;
+            box-shadow: 10px 10px 0px var(--neon-magenta);
+            transition: 0.2s;
+            min-height: 180px;
+        }
+        .card:hover { transform: translate(-4px, -4px); box-shadow: 14px 14px 0px var(--neon-cyan); border-color: var(--neon-cyan); }
+        .card.upcoming-card { border-color: var(--neon-yellow); box-shadow: 10px 10px 0px var(--neon-yellow); }
+        .card.archived { opacity: 0.5; border-style: dashed; box-shadow: 4px 4px 0px #333; }
+
+        .card h3 { background: var(--white); color: #000; padding: 0.2rem 0.8rem; margin: 0 0 1.5rem 0; font-size: 0.85rem; display: inline-block; }
+        .card.upcoming-card h3 { background: var(--neon-yellow); }
+
+        .desc { font-size: 0.75rem; line-height: 1.6; color: #ccc; margin-bottom: 2rem; }
+
+        .btn-row { display: flex; gap: 10px; }
+        .btn {
+            border: 1px solid var(--white); color: var(--white);
+            text-decoration: none; padding: 0.4rem 0.9rem;
+            font-size: 0.7rem; font-weight: 700; cursor: pointer;
+            background: transparent; font-family: inherit;
+        }
+        .btn:hover { background: var(--white); color: #000; }
+
+        .card-icon { position: absolute; top: 1.2rem; right: 1.2rem; height: 22px; filter: invert(1); opacity: 0.8; }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 1, 18, 0.92); backdrop-filter: blur(6px); z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        .modal-window {
+            background: var(--bg-black); border: var(--border-width) solid var(--neon-cyan);
+            width: 420px; box-shadow: 15px 15px 0px var(--neon-magenta);
+        }
+        .modal-header { background: var(--neon-cyan); color: #000; padding: 0.6rem 1rem; display: flex; justify-content: space-between; font-weight: bold; }
+        .modal-body { padding: 2.5rem; text-align: center; }
+        .modal-close { cursor: pointer; font-size: 1.5rem; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-layer"><div class="grid-floor"></div></div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-window">
+            <div class="modal-header"><span>>> ACCESS_GATEWAY</span><span class="modal-close" id="closeBtn">&times;</span></div>
+            <div class="modal-body">
+                <p id="modalProjectName" style="font-size: 0.75rem; color: var(--neon-yellow); margin-bottom: 20px;"></p>
+                <div style="display:flex; flex-direction:column; gap:12px;" id="modalLinks"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>LIXUNTRIS</h1>
+            <div class="bio">I AM LIXUNTRIS. I DELVE INTO LOW LEVEL ENGINE DEVELOPMENT. <br>BEEN DOING IT FOR A FEW YEARS AND THIS IS MY WEBSITE.</div>
+        </header>
+
+        <div class="label">>> ACTIVE_ENGINES</div>
+        <div class="project-grid">
+            <div class="card">
+                <img class="card-icon" src="https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/cubes.png">
+                <h3>VOXEL_RASTERIZER</h3>
+                <p class="desc">> SOFTWARE-BASED RENDERING<br>> 64-BIT CHUNK ADDRESSING<br>> STATUS: ACTIVE_DEV</p>
+                <div class="btn-row">
+                    <button class="btn open-modal" data-id="voxel">[ SOURCE ]</button>
+                </div>
+            </div>
+            <div class="card">
+                <img class="card-icon" src="https://www.khronos.org/assets/images/api_logos/opengl.svg">
+                <h3>PATH_TRACER</h3>
+                <p class="desc">> GPU KERNEL OPTIMIZATION<br>> BVH STRUCTURE<br>> STATUS: TUNING</p>
+                <div class="btn-row">
+                    <button class="btn open-modal" data-id="path-tracer">[ SOURCE ]</button>
+                </div>
+            </div>
+            <div class="card">
+                <img class="card-icon" src="https://styles.redditmedia.com/t5_35v6v/styles/communityIcon_efieflhrcrx71.png">
+                <h3>PHYSICS_PBD</h3>
+                <p class="desc">> POSITION BASED DYNAMICS<br>> VOXEL COLLISION<br>> STATUS: STABLE</p>
+                <div class="btn-row">
+                    <a href="blueprint.html?id=physics" class="btn">[ DEMO ]</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="label upcoming">>> UPCOMING_RESEARCH // MACHINE_LEARNING</div>
+        <div class="project-grid">
+            <div class="card upcoming-card">
+                <img class="card-icon" src="https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/cpu.png">
+                <h3>NEURAL_VOXEL_AGENTS</h3>
+                <p class="desc">> TRAINING NEURAL NETWORKS TO EXIST IN THE VOXEL WORLD.<br>> AGENT NAVIGATION IN VOLUMETRIC SPACE.</p>
+                <div class="btn-row">
+                    <a href="blueprint.html?id=neural-agents" class="btn">[ RESEARCH_LOG ]</a>
+                </div>
+            </div>
+            <div class="card upcoming-card">
+                <img class="card-icon" src="https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/environment.png">
+                <h3>VOXEL_ECOSYSTEM</h3>
+                <p class="desc">> LARGE SCALE ECOSYSTEM SIMULATIONS.<br>> UTILIZING VOXEL ENGINE FOR BIOLOGICAL DATA.</p>
+                <div class="btn-row">
+                    <a href="blueprint.html?id=ecosystem" class="btn">[ BLUEPRINT ]</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="label archive">>> DEPRECATED_ARCHIVE</div>
+        <div class="project-grid">
+            <div class="card archived">
+                <h3>CA & CAGI</h3>
+                <p class="desc">> CELLULAR AUTOMATA RESEARCH<br>> DEPRECATED_LEGACY</p>
+                <div class="btn-row">
+                    <a href="blueprint.html?id=cagi" class="btn">[ VIEW ]</a>
+                </div>
+            </div>
+            <div class="card archived">
+                <h3>VOXEL_RAY_TRACER</h3>
+                <p class="desc">> LEGACY MARCHING ALGORITHM<br>> DEPRECATED_2024</p>
+                <div class="btn-row">
+                    <a href="blueprint.html?id=legacy-tracer" class="btn">[ VIEW ]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('modalOverlay');
+        const modalLinks = document.getElementById('modalLinks');
+        const modalName = document.getElementById('modalProjectName');
+        
+        // MANAGE ALL MODAL LINKS HERE
+        const projectData = {
+            'voxel': { name: 'VOXEL_RASTERIZER', github: "#", docs: "blueprint.html?id=voxel" },
+            'path-tracer': { name: 'PATH_TRACER', github: "#", docs: "blueprint.html?id=path-tracer" }
+        };
+
+        document.querySelectorAll('.open-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const data = projectData[id];
+                modalName.innerText = `IDENTIFIED: ${data.name}`;
+                modalLinks.innerHTML = `
+                    <a href="${data.github}" class="btn" target="_blank">[ DOWNLOAD_SOURCE ]</a>
+                    <a href="${data.docs}" class="btn">[ READ_SPECIFICATION ]</a>
+                `;
+                overlay.style.display = 'flex';
+            });
+        });
+
+        document.getElementById('closeBtn').onclick = () => overlay.style.display = 'none';
+        window.onclick = (e) => { if(e.target == overlay) overlay.style.display = 'none'; }
+    </script>
+</body>
+</html>
