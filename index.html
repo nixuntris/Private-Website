@@ -23,6 +23,17 @@
             font-family: 'Space Mono', monospace;
             color: var(--white);
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* HARD VIGNETTE */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.95) 100%);
+            pointer-events: none;
+            z-index: 60;
         }
 
         /* BACKGROUND LAYER */
@@ -46,11 +57,30 @@
 
         @keyframes move-grid { from { background-position: 0 0; } to { background-position: 0 50px; } }
 
-        .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
+        /* DYNAMIC CHESS PIECE STYLING */
+        .chess-debris {
+            position: fixed;
+            z-index: 1;
+            user-select: none;
+            pointer-events: none;
+            opacity: 0;
+            white-space: nowrap;
+            animation: drift-chaos var(--duration) linear infinite;
+        }
+
+        @keyframes drift-chaos {
+            0% { transform: translate(var(--x-start), 115vh) rotate(0deg); opacity: 0; }
+            15% { opacity: var(--max-opacity); }
+            85% { opacity: var(--max-opacity); }
+            100% { transform: translate(var(--x-end), -55vh) rotate(var(--rotation)); opacity: 0; }
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 70; }
 
         header {
             border: var(--border-width) solid var(--white);
             background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
             padding: 2.5rem; margin-bottom: 3rem;
             box-shadow: 12px 12px 0px var(--neon-magenta);
         }
@@ -58,7 +88,6 @@
         h1 { margin: 0; font-size: clamp(2.5rem, 8vw, 5rem); text-shadow: 3px 3px var(--neon-cyan); }
         .bio { margin-top: 1rem; border-left: 5px solid var(--neon-cyan); padding-left: 1.5rem; color: #eee; }
 
-        /* SECTION LABELS */
         .label {
             display: inline-block; padding: 0.6rem 1.5rem; font-weight: 700;
             margin: 3rem 0 1.5rem 0; background: var(--neon-cyan); color: #000;
@@ -69,9 +98,8 @@
 
         .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; }
 
-        /* CARDS */
         .card {
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.98);
             border: var(--border-width) solid var(--white);
             padding: 1.5rem; position: relative;
             box-shadow: 10px 10px 0px var(--neon-magenta);
@@ -101,7 +129,6 @@
 
         .card-icon { position: absolute; top: 1.2rem; right: 1.2rem; height: 22px; filter: invert(1); opacity: 0.8; }
 
-        /* MODAL */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 1, 18, 0.92); backdrop-filter: blur(6px); z-index: 1000;
@@ -119,6 +146,8 @@
 <body>
 
     <div class="bg-layer"><div class="grid-floor"></div></div>
+
+    <div id="chaos-field"></div>
 
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-window">
@@ -207,6 +236,44 @@
     </div>
 
     <script>
+        const pieces = ['♟', '♜', '♞', '♝', '♛', '♚', '♟', '♞'];
+        const colors = ['var(--neon-cyan)', 'var(--neon-magenta)', 'var(--neon-yellow)', '#ffffff'];
+        const chaosField = document.getElementById('chaos-field');
+
+        // Distribution logic: Divide the screen width into sectors to ensure a spread
+        const pieceCount = 50; 
+        for (let i = 0; i < pieceCount; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'chess-debris';
+            piece.innerText = pieces[Math.floor(Math.random() * pieces.length)];
+            
+            // Randomized spreading across full viewport width
+            const sectorWidth = 100 / pieceCount;
+            const xBase = (i * sectorWidth) + (Math.random() * sectorWidth);
+            const xStart = (xBase - 10) + "vw"; 
+            const driftRange = (Math.random() - 0.5) * 40; // Random drift left or right
+            const xEnd = (xBase + driftRange) + "vw";
+
+            const size = Math.random() * 12 + 4 + "rem";
+            const duration = Math.random() * 20 + 15 + "s";
+            const delay = Math.random() * -40 + "s";
+            const rotation = Math.random() * 720 - 360 + "deg";
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const opacity = Math.random() * 0.25 + 0.05;
+
+            piece.style.setProperty('--x-start', xStart);
+            piece.style.setProperty('--x-end', xEnd);
+            piece.style.setProperty('--duration', duration);
+            piece.style.setProperty('--rotation', rotation);
+            piece.style.setProperty('--max-opacity', opacity);
+            piece.style.fontSize = size;
+            piece.style.color = color;
+            piece.style.filter = `drop-shadow(0 0 15px ${color})`;
+            piece.style.animationDelay = delay;
+
+            chaosField.appendChild(piece);
+        }
+
         const overlay = document.getElementById('modalOverlay');
         const modalLinks = document.getElementById('modalLinks');
         const modalName = document.getElementById('modalProjectName');
@@ -222,9 +289,7 @@
                 const id = btn.getAttribute('data-id');
                 const data = projectData[id];
                 modalName.innerText = `IDENTIFIED: ${data.name}`;
-                modalLinks.innerHTML = `
-                    <a href="${data.github}" class="btn" target="_blank">[ DOWNLOAD_REPOSITORY ]</a>
-                `;
+                modalLinks.innerHTML = `<a href="${data.github}" class="btn" target="_blank">[ DOWNLOAD_REPOSITORY ]</a>`;
                 overlay.style.display = 'flex';
             });
         });
