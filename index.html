@@ -77,22 +77,25 @@
             box-shadow: 10px 10px 0px var(--neon-magenta);
             transition: 0.2s;
             min-height: 180px;
+            display: flex;
+            flex-direction: column;
         }
         .card:hover { transform: translate(-4px, -4px); box-shadow: 14px 14px 0px var(--neon-cyan); border-color: var(--neon-cyan); }
         .card.upcoming-card { border-color: var(--neon-yellow); box-shadow: 10px 10px 0px var(--neon-yellow); }
         .card.archived { opacity: 0.5; border-style: dashed; box-shadow: 4px 4px 0px #333; }
 
-        .card h3 { background: var(--white); color: #000; padding: 0.2rem 0.8rem; margin: 0 0 1.5rem 0; font-size: 0.85rem; display: inline-block; }
+        .card h3 { background: var(--white); color: #000; padding: 0.2rem 0.8rem; margin: 0 0 1.5rem 0; font-size: 0.85rem; display: inline-block; align-self: flex-start; }
         .card.upcoming-card h3 { background: var(--neon-yellow); }
 
-        .desc { font-size: 0.75rem; line-height: 1.6; color: #ccc; margin-bottom: 2rem; }
+        .desc { font-size: 0.75rem; line-height: 1.6; color: #ccc; margin-bottom: 2rem; flex-grow: 1; }
 
-        .btn-row { display: flex; gap: 10px; }
+        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn {
             border: 1px solid var(--white); color: var(--white);
             text-decoration: none; padding: 0.4rem 0.9rem;
             font-size: 0.7rem; font-weight: 700; cursor: pointer;
             background: transparent; font-family: inherit;
+            white-space: nowrap;
         }
         .btn:hover { background: var(--white); color: #000; }
 
@@ -141,6 +144,7 @@
                 <p class="desc">> SOFTWARE-BASED RENDERING<br>> 64-BIT CHUNK ADDRESSING<br>> STATUS: ACTIVE_DEV</p>
                 <div class="btn-row">
                     <button class="btn open-modal" data-id="voxel">[ SOURCE ]</button>
+                    <a href="blueprint.html?id=voxel" class="btn">[ SPEC ]</a>
                 </div>
             </div>
             <div class="card">
@@ -149,6 +153,7 @@
                 <p class="desc">> GPU KERNEL OPTIMIZATION<br>> BVH STRUCTURE<br>> STATUS: TUNING</p>
                 <div class="btn-row">
                     <button class="btn open-modal" data-id="path-tracer">[ SOURCE ]</button>
+                    <a href="blueprint.html?id=path-tracer" class="btn">[ SPEC ]</a>
                 </div>
             </div>
             <div class="card">
@@ -156,8 +161,8 @@
                 <h3>PHYSICS_PBD</h3>
                 <p class="desc">> POSITION BASED DYNAMICS<br>> VOXEL COLLISION<br>> STATUS: STABLE</p>
                 <div class="btn-row">
-                    <!-- Changed from direct link to modal to match other active engines -->
                     <button class="btn open-modal" data-id="physics">[ SOURCE ]</button>
+                    <a href="blueprint.html?id=physics_pbd" class="btn">[ SPEC ]</a>
                 </div>
             </div>
         </div>
@@ -206,11 +211,10 @@
         const modalLinks = document.getElementById('modalLinks');
         const modalName = document.getElementById('modalProjectName');
         
-        // MANAGE ALL MODAL LINKS HERE
         const projectData = {
-            'voxel': { name: 'VOXEL_RASTERIZER', github: "#", docs: "blueprint.html?id=voxel" },
-            'path-tracer': { name: 'PATH_TRACER', github: "#", docs: "blueprint.html?id=path-tracer" },
-            'physics': { name: 'PHYSICS_PBD', github: "#", docs: "blueprint.html?id=physics_pbd" }
+            'voxel': { name: 'VOXEL_RASTERIZER', github: "#" },
+            'path-tracer': { name: 'PATH_TRACER', github: "#" },
+            'physics': { name: 'PHYSICS_PBD', github: "#" }
         };
 
         document.querySelectorAll('.open-modal').forEach(btn => {
@@ -219,12 +223,11 @@
                 const data = projectData[id];
                 modalName.innerText = `IDENTIFIED: ${data.name}`;
                 modalLinks.innerHTML = `
-                    <a href="${data.docs}" class="btn">[ READ_SPECIFICATION ]</a>
+                    <a href="${data.github}" class="btn" target="_blank">[ DOWNLOAD_REPOSITORY ]</a>
                 `;
                 overlay.style.display = 'flex';
             });
         });
-//<a href="${data.github}" class="btn" target="_blank">[ DOWNLOAD_SOURCE ]</a>
                     
         document.getElementById('closeBtn').onclick = () => overlay.style.display = 'none';
         window.onclick = (e) => { if(e.target == overlay) overlay.style.display = 'none'; }
