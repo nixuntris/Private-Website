@@ -13,6 +13,7 @@
             --blueprint-line: #00ffff;
             --text-white: #e0f7fa;
             --accent-yellow: #fff000;
+            --dim-text: rgba(224, 247, 250, 0.6);
         }
 
         body {
@@ -33,11 +34,11 @@
             margin: 0 auto;
             border: 2px solid var(--blueprint-line);
             padding: 2rem;
-            background: rgba(0, 17, 51, 0.8);
+            background: rgba(0, 17, 51, 0.9);
             position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
         }
 
-        /* Technical Header */
         header {
             border-bottom: 2px double var(--blueprint-line);
             margin-bottom: 2rem;
@@ -48,57 +49,65 @@
             color: var(--accent-yellow);
             text-decoration: none;
             font-size: 0.8rem;
-            display: block;
+            display: inline-block;
             margin-bottom: 1rem;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
         }
 
-        h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; }
-        .meta-data { font-size: 0.7rem; opacity: 0.7; margin-top: 0.5rem; }
+        .back-link:hover {
+            border: 1px solid var(--accent-yellow);
+            padding: 0 5px;
+        }
 
-        /* Blog Content */
-        .post-content { line-height: 1.6; }
+        h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; color: var(--blueprint-line); }
+        .meta-data { font-size: 0.7rem; color: var(--dim-text); margin-top: 0.5rem; }
 
-        /* Easy Image Container */
+        .post-content { line-height: 1.6; font-size: 0.9rem; }
+        .post-content p { margin-bottom: 1.5rem; }
+        
+        .technical-specs {
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 3px solid var(--accent-yellow);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            font-size: 0.8rem;
+        }
+
         .image-block {
             border: 1px solid var(--blueprint-line);
             margin: 2rem 0;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
             text-align: center;
         }
 
-        .image-block img {
+        .image-block img, .image-block video {
             max-width: 100%;
             height: auto;
             display: block;
-            filter: cyan; /* Optional: adds a blueprint tint */
+            margin: 0 auto;
+            filter: cyan(100%); /* Optional: adds to blueprint feel */
         }
 
         .caption {
             font-size: 0.7rem;
-            margin-top: 10px;
+            margin-top: 12px;
             color: var(--accent-yellow);
             display: block;
+            letter-spacing: 1px;
         }
-
-        .tech-specs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin: 2rem 0;
-            padding: 1rem;
-            border: 1px dashed var(--blueprint-line);
-        }
-
-        .spec-item b { color: var(--blueprint-line); }
 
         footer {
-            margin-top: 3rem;
+            margin-top: 4rem;
             font-size: 0.6rem;
             text-align: center;
-            border-top: 1px solid var(--blueprint-line);
-            padding-top: 1rem;
+            border-top: 1px solid var(--grid-color);
+            padding-top: 1.5rem;
+            color: var(--dim-text);
         }
+
+        b { color: var(--accent-yellow); }
     </style>
 </head>
 <body>
@@ -107,70 +116,127 @@
         <a href="index.html" class="back-link"><< RETURN_TO_TERMINAL</a>
         
         <header>
-            <h1 id="postTitle">LOADING_DATA...</h1>
+            <h1 id="postTitle">SYSTEM_ACCESSING...</h1>
             <div class="meta-data">
-                REF_ID: <span id="refId">0000</span> | 
-                STAMP: <span id="postDate">2026.05.11</span> | 
-                STATUS: ENCRYPTED
+                REF_ID: <span id="refId">----</span> | 
+                STAMP: <span id="postDate">0000.00.00</span> | 
+                STATUS: DECRYPTED
             </div>
         </header>
 
         <article class="post-content" id="postBody">
-            </article>
+            <!-- CONTENT INJECTED VIA JS -->
+        </article>
 
         <footer>
-            LIXUNTRIS // RECONSTRUCTED ENGINE LOG // UNAUTHORIZED ACCESS PROHIBITED
+            LIXUNTRIS // RECONSTRUCTED ENGINE LOG // CORE_SYSTEM_VER_4.02 // UNAUTHORIZED ACCESS PROHIBITED
         </footer>
     </div>
 
     <script>
-        // DATA STORAGE (Add your content here!)
         const blogPosts = {
             'voxel': {
-                title: "VOXEL_RASTERIZER // DEV_LOG_01",
-                ref: "VX-99",
-                date: "2026.04.20",
+                title: "VOXEL_RASTERIZER // DEV_LOG",
+                ref: "VX-01",
+                date: "2026.05.13",
                 content: `
-                    <p>Initial reconstruction of the software rasterizer is complete. By utilizing 64-bit chunk addressing, we have achieved a theoretical world limit of 18 quintillion voxels.</p>
+                    <p>Implementation of a custom <b>Virtualized Geometry</b> pipeline. The core objective is to bypass traditional triangle bottlenecks by leveraging small-scale voxels for high-fidelity engineering simulations.</p>
                     
+                    <div class="technical-specs">
+                        OBJECTIVE: Real-time rasterization of sparse voxel octrees (SVO)<br>
+                        INSPIRATION: Lin-Rundlett architectural frameworks<br>
+                        STATUS: Optimization phase / Mental cooldown active
+                    </div>
+
                     <div class="image-block">
-                        <img src="https://via.placeholder.com/800x400/001133/00ffff?text=VOXEL_RENDER_SCHEAMATIC" alt="Voxel Render">
-                        <span class="caption">FIG 01: DEPTH BUFFER CALCULATION IN VOLUMETRIC SPACE</span>
+                        <img src="showcase/enginerasterizer.png" alt="Engine Screenshot 1">
+                        <video width="100%" style="margin-top:10px;" controls autoplay muted loop>
+                            <source src="showcase/physicsrasterizervid.mp4" type="video/mp4">
+                        </video>
+                        <span class="caption">DATA_VISUALIZATION: ENGINE_RENDER_STREAMS</span>
                     </div>
 
-                    <div class="tech-specs">
-                        <div class="spec-item"><b>LANGUAGE:</b> C++20</div>
-                        <div class="spec-item"><b>PARADIGM:</b> DATA-ORIENTED</div>
-                        <div class="spec-item"><b>MEMORY:</b> POOL_ALLOCATION</div>
-                        <div class="spec-item"><b>LATENCY:</b> 0.42ms</div>
-                    </div>
-
-                    <p>Next phase involves implementing Octree traversal for faster occlusion culling.</p>
+                    <p>Current focus is on structural integrity within the voxel grid. While the brain-drain is real, the potential for granular destruction and precision engineering remains the primary driver for this engine.</p>
                 `
             },
             'path-tracer': {
-                title: "PATH_TRACER // LIGHT_TRANSPORT_LOG",
-                ref: "PT-02",
-                date: "2026.05.02",
+                title: "PATH_TRACER // LIGHT_TRANSPORT",
+                ref: "PT-01",
+                date: "2026.05.13",
                 content: `
-                    <p>The BVH (Bounding Volume Hierarchy) structure is now stable. GPU kernels are showing a 15% increase in ray-traversal efficiency.</p>
+                    <p>Development of a plug-and-play <b>Compute Raytracing</b> module. This renderer is designed for seamless integration into existing pipelines to handle complex light transport and global illumination.</p>
+                    
                     <div class="image-block">
-                        <img src="https://via.placeholder.com/800x400/001133/00ffff?text=RAY_TRAVERSAL_MAP" alt="Path Tracer">
-                        <span class="caption">FIG 02: RAY BOUNCE PROBABILITY DISTRIBUTION</span>
+                        <img src="showcase/corenlsbox.png" alt="Cornell Box Render">
+                        <span class="caption">FIG 01: CORNELL BOX TEST // DIFFUSE REBND EVALUATION</span>
                     </div>
+
+                    <p>Future iterations target hardware-accelerated raytracing support (DXR/Vulkan Ray Tracing) to maximize throughput in dynamic environments.</p>
+                `
+            },
+            'physics_pbd': {
+                title: "PHYSICS_PBD // CONSTRAINTS_LOG",
+                ref: "PBD-01",
+                date: "2026.05.13",
+                content: `
+                    <p>Analysis of <b>Position Based Dynamics (PBD)</b> for stable multi-body simulations. Unlike force-based solvers, this CPU-driven implementation focuses on direct positional manipulation to maintain constraint integrity.</p>
+                    
+                    <div class="technical-specs">
+                        PRIMARY RESOURCE: "Game Physics Engine Development" (Ian Millington)<br>
+                        INTEGRATION: Experimental CA (Cellular Automata) systems
+                    </div>
+
+                    <div class="image-block">
+                        <video width="100%" controls autoplay muted loop>
+                            <source src="showcase/solver.mp4" type="video/mp4">
+                        </video>
+                        <span class="caption">VID: PBD_SIMULATION_STABILITY_TEST // CONSTRAINT_SOLVER</span>
+                    </div>
+
+                    <p>System currently being stress-tested within a Noita-inspired pixel-physics environment to evaluate performance under high particle counts.</p>
+                `
+            },
+            'cagi': {
+                title: "CAGI // IRRADIANCE_LOG",
+                ref: "GI-01",
+                date: "2026.05.13",
+                content: `
+                    <p>Exploration of <b>Cellular Automata Global Illumination (CAGI)</b>. This technique, pioneered by Xima, utilizes local cell updates to approximate complex irradiance volumes.</p>
+                    
+                    <div class="image-block">
+                        <img src="showcase/cagi.png" alt="CAGI Screenshot">
+                        <span class="caption">REF: CAGI_TECHNIQUE_TEST_01 // LIGHT_DIFFUSION_MAP</span>
+                    </div>
+
+                    <p>Validation of energy conservation within the CA grid is ongoing. The goal is a highly performant, stylized GI solution for grid-based worlds.</p>
+                `
+            },
+            'ca_physics': {
+                title: "CA_PHYSICS // INTEGRATION_LOG",
+                ref: "CAP-01",
+                date: "2026.05.13",
+                content: `
+                    <p>The convergence of PBD and CAGI. This project aims to unify structural physics with dynamic light propagation within a cellular framework.</p>
+                    <p style="color: var(--accent-yellow); font-weight: bold; border: 1px dashed var(--accent-yellow); padding: 10px; text-align: center;">
+                        [DATA REDACTED // ACCESS RESTRICTED TO LEVEL 4 OPERATIVES]
+                    </p>
                 `
             }
         };
 
-        // NAVIGATION LOGIC
         function loadPost() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
-            const post = blogPosts[id] || { title: "404_NOT_FOUND", content: "FILE CORRUPTED OR REMOVED." };
+            const post = blogPosts[id] || { 
+                title: "404_NOT_FOUND", 
+                ref: "ERR", 
+                date: "NULL", 
+                content: "<p>CRITICAL_ERROR: FILE_NOT_FOUND. The requested log has been purged from the terminal.</p>" 
+            };
 
             document.getElementById('postTitle').innerText = post.title;
-            document.getElementById('refId').innerText = post.ref || "N/A";
-            document.getElementById('postDate').innerText = post.date || "UNKNOWN";
+            document.getElementById('refId').innerText = post.ref;
+            document.getElementById('postDate').innerText = post.date;
             document.getElementById('postBody').innerHTML = post.content;
         }
 

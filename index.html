@@ -156,7 +156,8 @@
                 <h3>PHYSICS_PBD</h3>
                 <p class="desc">> POSITION BASED DYNAMICS<br>> VOXEL COLLISION<br>> STATUS: STABLE</p>
                 <div class="btn-row">
-                    <a href="blueprint.html?id=physics" class="btn">[ DEMO ]</a>
+                    <!-- Changed from direct link to modal to match other active engines -->
+                    <button class="btn open-modal" data-id="physics">[ SOURCE ]</button>
                 </div>
             </div>
         </div>
@@ -208,7 +209,8 @@
         // MANAGE ALL MODAL LINKS HERE
         const projectData = {
             'voxel': { name: 'VOXEL_RASTERIZER', github: "#", docs: "blueprint.html?id=voxel" },
-            'path-tracer': { name: 'PATH_TRACER', github: "#", docs: "blueprint.html?id=path-tracer" }
+            'path-tracer': { name: 'PATH_TRACER', github: "#", docs: "blueprint.html?id=path-tracer" },
+            'physics': { name: 'PHYSICS_PBD', github: "#", docs: "blueprint.html?id=physics_pbd" }
         };
 
         document.querySelectorAll('.open-modal').forEach(btn => {
@@ -217,13 +219,13 @@
                 const data = projectData[id];
                 modalName.innerText = `IDENTIFIED: ${data.name}`;
                 modalLinks.innerHTML = `
-                    <a href="${data.github}" class="btn" target="_blank">[ DOWNLOAD_SOURCE ]</a>
                     <a href="${data.docs}" class="btn">[ READ_SPECIFICATION ]</a>
                 `;
                 overlay.style.display = 'flex';
             });
         });
-
+//<a href="${data.github}" class="btn" target="_blank">[ DOWNLOAD_SOURCE ]</a>
+                    
         document.getElementById('closeBtn').onclick = () => overlay.style.display = 'none';
         window.onclick = (e) => { if(e.target == overlay) overlay.style.display = 'none'; }
     </script>
