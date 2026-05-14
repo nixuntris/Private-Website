@@ -3,244 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIXUNTRIS // BLUEPRINT_LOG</title>
+    <title>Lixuntris // Blueprint Log</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;700&display=swap');
 
         :root {
-            --bg-blue: #001133;
-            --grid-color: rgba(0, 255, 255, 0.1);
-            --blueprint-line: #00ffff;
-            --text-white: #e0f7fa;
-            --accent-yellow: #fff000;
-            --dim-text: rgba(224, 247, 250, 0.6);
+            /* Formal Theme (Base) */
+            --bg-color: #ffffff;
+            --grid-line: transparent;
+            --line-color: #1a1a1a;
+            --text-color: #1a1a1a;
+            --accent-color: #3366cc;
+            --font-stack: 'Inter', system-ui, sans-serif;
+            --container-bg: #ffffff;
+            --border-style: 1px solid #dddddd;
+        }
+
+        /* Blueprint Theme (Toggle) */
+        body.cyber-mode {
+            --bg-color: #001133;
+            --grid-line: rgba(0, 255, 255, 0.1);
+            --line-color: #00ffff;
+            --text-color: #e0f7fa;
+            --accent-color: #fff000;
+            --font-stack: 'Space Mono', monospace;
+            --container-bg: rgba(0, 17, 51, 0.95);
+            --border-style: 2px solid var(--line-color);
         }
 
         body {
-            background-color: var(--bg-blue);
+            background-color: var(--bg-color);
             background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
             background-size: 30px 30px;
-            color: var(--text-white);
-            font-family: 'Space Mono', monospace;
-            margin: 0;
-            padding: 2rem;
-            text-transform: uppercase;
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            margin: 0; padding: 2rem;
+            transition: background 0.2s ease;
+        }
+
+        #theme-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 2000;
+            padding: 8px 16px; cursor: pointer;
+            background: #000; color: #fff;
+            font-family: var(--font-stack); font-weight: bold;
+            border: 2px solid var(--text-color);
+            border-radius: 4px;
+        }
+        body.cyber-mode #theme-toggle { 
+            background: var(--line-color); 
+            color: var(--bg-color); 
+            border-radius: 0;
         }
 
         .container {
-            max-width: 900px;
-            margin: 0 auto;
-            border: 2px solid var(--blueprint-line);
-            padding: 2rem;
-            background: rgba(0, 17, 51, 0.9);
-            position: relative;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+            max-width: 850px; margin: 0 auto;
+            border: var(--border-style); padding: 2.5rem;
+            background: var(--container-bg); position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 8px;
+        }
+        body.cyber-mode .container { 
+            box-shadow: none; 
+            border-radius: 0; 
         }
 
-        header {
-            border-bottom: 2px double var(--blueprint-line);
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-        }
+        header { border-bottom: 1px solid #dddddd; margin-bottom: 2rem; padding-bottom: 1.5rem; }
+        body.cyber-mode header { border-bottom: 2px double var(--line-color); }
 
-        .back-link {
-            color: var(--accent-yellow);
-            text-decoration: none;
-            font-size: 0.8rem;
-            display: inline-block;
-            margin-bottom: 1rem;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
-        }
+        .back-link { color: var(--accent-color); text-decoration: none; font-size: 0.8rem; display: inline-block; margin-bottom: 1rem; }
+        h1 { margin: 0; font-size: 1.8rem; color: var(--line-color); }
 
-        .back-link:hover {
-            border: 1px solid var(--accent-yellow);
-            padding: 0 5px;
+        .status-badge {
+            display: inline-block; margin-top: 10px;
+            border: 1px solid var(--accent-color); color: var(--accent-color);
+            padding: 2px 8px; font-size: 0.7rem; font-weight: bold;
         }
-
-        h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; color: var(--blueprint-line); }
-        .meta-data { font-size: 0.7rem; color: var(--dim-text); margin-top: 0.5rem; }
 
         .post-content { line-height: 1.6; font-size: 0.9rem; }
-        .post-content p { margin-bottom: 1.5rem; }
         
         .technical-specs {
-            background: rgba(0, 255, 255, 0.05);
-            border-left: 3px solid var(--accent-yellow);
-            padding: 1rem;
-            margin: 1.5rem 0;
-            font-size: 0.8rem;
+            background: #f9f9f9; border-left: 3px solid #000;
+            padding: 1.2rem; margin: 1.5rem 0; font-size: 0.8rem;
+        }
+        body.cyber-mode .technical-specs { 
+            background: rgba(0, 255, 255, 0.05); 
+            border-left-color: var(--accent-color); 
         }
 
-        .image-block {
-            border: 1px solid var(--blueprint-line);
-            margin: 2rem 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.03);
-            text-align: center;
-        }
+        .image-block { border: 1px solid var(--line-color); margin: 2rem 0; padding: 15px; text-align: center; }
+        .caption { font-size: 0.7rem; margin-top: 12px; color: #888; display: block; }
+        body.cyber-mode .caption { color: var(--accent-color); }
 
-        .image-block img, .image-block video {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            filter: cyan(100%); /* Optional: adds to blueprint feel */
-        }
-
-        .caption {
-            font-size: 0.7rem;
-            margin-top: 12px;
-            color: var(--accent-yellow);
-            display: block;
-            letter-spacing: 1px;
-        }
-
-        footer {
-            margin-top: 4rem;
-            font-size: 0.6rem;
-            text-align: center;
-            border-top: 1px solid var(--grid-color);
-            padding-top: 1.5rem;
-            color: var(--dim-text);
-        }
-
-        b { color: var(--accent-yellow); }
+        footer { margin-top: 4rem; font-size: 0.65rem; text-align: center; opacity: 0.6; }
+        b { color: var(--accent-color); }
     </style>
 </head>
 <body>
 
+    <button id="theme-toggle">MODE: CYBER</button>
+
     <div class="container">
-        <a href="index.html" class="back-link"><< RETURN_TO_TERMINAL</a>
-        
+        <a href="index.html" class="back-link">&lt;&lt; Return to Index</a>
         <header>
-            <h1 id="postTitle">SYSTEM_ACCESSING...</h1>
-            <div class="meta-data">
-                REF_ID: <span id="refId">----</span> | 
-                STAMP: <span id="postDate">0000.00.00</span> | 
-                STATUS: DECRYPTED
-            </div>
+            <h1 id="postTitle">Loading project...</h1>
+            <div class="status-badge">Under Construction</div>
         </header>
 
-        <article class="post-content" id="postBody">
-            <!-- CONTENT INJECTED VIA JS -->
-        </article>
+        <article class="post-content" id="postBody"></article>
 
         <footer>
-            LIXUNTRIS // RECONSTRUCTED ENGINE LOG // CORE_SYSTEM_VER_4.02 // UNAUTHORIZED ACCESS PROHIBITED
+            Lixuntris // Reconstructed Engine Log // Core System Ver. 4.02 // 2026
         </footer>
     </div>
 
     <script>
-        const blogPosts = {
+        const projectLogs = {
             'voxel': {
-                title: "VOXEL_RASTERIZER // DEV_LOG",
-                ref: "VX-01",
-                date: "2026.05.13",
+                title: "Voxel Rasterizer Architecture",
                 content: `
-                    <p>Implementation of a custom <b>Virtualized Geometry</b> pipeline. The core objective is to bypass traditional triangle bottlenecks by leveraging small-scale voxels for high-fidelity engineering simulations.</p>
-                    
+                    <p>This documentation is currently under construction. It details the implementation of a <b>Virtualized Geometry</b> pipeline.</p>
                     <div class="technical-specs">
-                        OBJECTIVE: Real-time rasterization of sparse voxel octrees (SVO)<br>
-                        INSPIRATION: Lin-Rundlett architectural frameworks<br>
-                        STATUS: Optimization phase / Mental cooldown active
+                        Objective: Real-time rasterization of brickmaps <br>
+                        Framework: Custom software renderer with 64-bit addressing
                     </div>
-
                     <div class="image-block">
-                        <img src="showcase/enginerasterizer.png" alt="Engine Screenshot 1">
+                        <img src="showcase/enginerasterizer.png" alt="Rasterizer Interface">
                         <video width="100%" style="margin-top:10px;" controls autoplay muted loop>
                             <source src="showcase/physicsrasterizervid.mp4" type="video/mp4">
                         </video>
-                        <span class="caption">DATA_VISUALIZATION: ENGINE_RENDER_STREAMS</span>
+                        <span class="caption">Technical View: Volumetric Render Streams</span>
                     </div>
-
-                    <p>Current focus is on structural integrity within the voxel grid. While the brain-drain is real, the potential for granular destruction and precision engineering remains the primary driver for this engine.</p>
                 `
             },
             'path-tracer': {
-                title: "PATH_TRACER // LIGHT_TRANSPORT",
-                ref: "PT-01",
-                date: "2026.05.13",
+                title: "Path Tracer Development",
                 content: `
-                    <p>Development of a plug-and-play <b>Compute Raytracing</b> module. This renderer is designed for seamless integration into existing pipelines to handle complex light transport and global illumination.</p>
-                    
+                    <p>Under construction. This section details compute ray tracing with global illumination.</p>
                     <div class="image-block">
-                        <img src="showcase/corenlsbox.png" alt="Cornell Box Render">
-                        <span class="caption">FIG 01: CORNELL BOX TEST // DIFFUSE REBND EVALUATION</span>
+                        <img src="showcase/corenlsbox.png" alt="Cornell Box Evaluation">
+                        <span class="caption">Simulation: Diffuse Rebound Analysis</span>
                     </div>
-
-                    <p>Future iterations target hardware-accelerated raytracing support (DXR/Vulkan Ray Tracing) to maximize throughput in dynamic environments.</p>
                 `
             },
             'physics_pbd': {
-                title: "PHYSICS_PBD // CONSTRAINTS_LOG",
-                ref: "PBD-01",
-                date: "2026.05.13",
+                title: "Physics: Position Based Dynamics",
                 content: `
-                    <p>Analysis of <b>Position Based Dynamics (PBD)</b> for stable multi-body simulations. Unlike force-based solvers, this CPU-driven implementation focuses on direct positional manipulation to maintain constraint integrity.</p>
-                    
-                    <div class="technical-specs">
-                        PRIMARY RESOURCE: "Game Physics Engine Development" (Ian Millington)<br>
-                        INTEGRATION: Experimental CA (Cellular Automata) systems
-                    </div>
-
+                    <p>Under construction. This section details PBD style physics simulations.</p>
                     <div class="image-block">
                         <video width="100%" controls autoplay muted loop>
                             <source src="showcase/solver.mp4" type="video/mp4">
                         </video>
-                        <span class="caption">VID: PBD_SIMULATION_STABILITY_TEST // CONSTRAINT_SOLVER</span>
+                        <span class="caption">Test Sequence: PBD Constraint Stability</span>
                     </div>
-
-                    <p>System currently being stress-tested within a Noita-inspired pixel-physics environment to evaluate performance under high particle counts.</p>
                 `
             },
             'cagi': {
-                title: "CAGI // IRRADIANCE_LOG",
-                ref: "GI-01",
-                date: "2026.05.13",
+                title: "CAGI Implementation",
                 content: `
-                    <p>Exploration of <b>Cellular Automata Global Illumination (CAGI)</b>. This technique, pioneered by Xima, utilizes local cell updates to approximate complex irradiance volumes.</p>
-                    
+                    <p>Under construction. Details regarding Cellular Automata Global Illumination.</p>
                     <div class="image-block">
-                        <img src="showcase/cagi.png" alt="CAGI Screenshot">
-                        <span class="caption">REF: CAGI_TECHNIQUE_TEST_01 // LIGHT_DIFFUSION_MAP</span>
+                        <img src="showcase/cagi.png" alt="CAGI Grid">
+                        <span class="caption">Visualization: Irradiance Propagation Map</span>
                     </div>
-
-                    <p>Validation of energy conservation within the CA grid is ongoing. The goal is a highly performant, stylized GI solution for grid-based worlds.</p>
-                `
-            },
-            'ca_physics': {
-                title: "CA_PHYSICS // INTEGRATION_LOG",
-                ref: "CAP-01",
-                date: "2026.05.13",
-                content: `
-                    <p>The convergence of PBD and CAGI. This project aims to unify structural physics with dynamic light propagation within a cellular framework.</p>
-                    <p style="color: var(--accent-yellow); font-weight: bold; border: 1px dashed var(--accent-yellow); padding: 10px; text-align: center;">
-                        [DATA REDACTED // ACCESS RESTRICTED TO LEVEL 4 OPERATIVES]
-                    </p>
                 `
             }
         };
 
-        function loadPost() {
+        function loadContent() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
-            const post = blogPosts[id] || { 
-                title: "404_NOT_FOUND", 
-                ref: "ERR", 
-                date: "NULL", 
-                content: "<p>CRITICAL_ERROR: FILE_NOT_FOUND. The requested log has been purged from the terminal.</p>" 
-            };
+            const postBody = document.getElementById('postBody');
+            const postTitle = document.getElementById('postTitle');
 
-            document.getElementById('postTitle').innerText = post.title;
-            document.getElementById('refId').innerText = post.ref;
-            document.getElementById('postDate').innerText = post.date;
-            document.getElementById('postBody').innerHTML = post.content;
+            if (id && projectLogs[id]) {
+                postTitle.innerText = projectLogs[id].title;
+                postBody.innerHTML = projectLogs[id].content;
+            } else {
+                postTitle.innerText = "Log Not Found";
+                postBody.innerHTML = "<p>Please select a valid project from the main terminal.</p>";
+            }
         }
 
-        window.onload = loadPost;
+        const toggle = document.getElementById('theme-toggle');
+        toggle.addEventListener('click', () => {
+            const isCyber = document.body.classList.toggle('formal-mode'); // Adjusted to toggle formal on/off
+            document.body.classList.toggle('cyber-mode');
+            toggle.innerText = document.body.classList.contains('cyber-mode') ? "MODE: FORMAL" : "MODE: CYBER";
+        });
+
+        // Initialize as formal by default
+        window.onload = loadContent;
     </script>
 </body>
 </html>
