@@ -91,21 +91,26 @@
             border-left-color: var(--accent-color); 
         }
 
-        /* Fixed Image/Video Formatting */
+        /* Scaled Image & Video Container */
         .image-block { 
-            border: 1px solid var(--line-color); 
+            border: var(--border-style); 
             margin: 2rem 0; 
             padding: 15px; 
             text-align: center;
-            background: rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         
+        /* Forces media to stay within container and match widths */
         .image-block img, 
         .image-block video { 
+            width: 100%; 
             max-width: 100%; 
             height: auto; 
             display: block;
             margin: 0 auto;
+            box-sizing: border-box;
         }
 
         .caption { font-size: 0.7rem; margin-top: 12px; color: #888; display: block; }
@@ -139,13 +144,9 @@
                 title: "Voxel Rasterizer Architecture",
                 content: `
                     <p>This documentation is currently under construction. It details the implementation of a <b>Virtualized Geometry</b> pipeline.</p>
-                    <div class="technical-specs">
-                        Objective: Real-time rasterization of brickmaps <br>
-                        Framework: Custom software renderer with 64-bit addressing
-                    </div>
                     <div class="image-block">
                         <img src="showcase/enginerasterizer.png" alt="Rasterizer Interface">
-                        <video width="100%" style="margin-top:10px;" controls autoplay muted loop>
+                        <video controls autoplay muted loop>
                             <source src="showcase/physicsrasterizervid.mp4" type="video/mp4">
                         </video>
                         <span class="caption">Technical View: Volumetric Render Streams</span>
@@ -167,7 +168,7 @@
                 content: `
                     <p>Under construction. This section details PBD style physics simulations.</p>
                     <div class="image-block">
-                        <video width="100%" controls autoplay muted loop>
+                        <video controls autoplay muted loop>
                             <source src="showcase/solver.mp4" type="video/mp4">
                         </video>
                         <span class="caption">Test Sequence: PBD Constraint Stability</span>
