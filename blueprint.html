@@ -166,13 +166,63 @@
             'physics_pbd': {
                 title: "Physics: Position Based Dynamics",
                 content: `
-                    <p>Under construction. This section details PBD style physics simulations.</p>
-                    <div class="image-block">
-                        <video controls autoplay muted loop>
-                            <source src="showcase/solver.mp4" type="video/mp4">
-                        </video>
-                        <span class="caption">Test Sequence: PBD Constraint Stability</span>
-                    </div>
+                    <article id="physics-pbd">
+    <h2>Physics: Position Based Dynamics</h2>
+
+    <p>
+        This is the very first iteration of my physics solver. I am open sourcing it because others may find it a useful learning resource. It utilizes a system similar to <strong>Position Based Dynamics (PBD)</strong> and impulse-based collision resolving. 
+    </p>
+
+    <p>
+        To keep things simple and readable for anyone following my logic, I’ve kept the project single-threaded, though it uses a few basic tricks to stay performant.
+    </p>
+
+    <hr>
+
+    <h3>Spatial Partitioning</h3>
+    <p>
+        In a naive physics engine, every object checks collisions with every other object. If you have 1,000 balls, that results in 1,000<sup>2</sup> (1,000,000) checks per frame. That’s wasteful when you can implement a simple <strong>chunk-based partitioning system</strong>.
+    </p>
+    <ul>
+        <li><strong>The Concept:</strong> Define a grid size (e.g., 40x40 units).</li>
+        <li><strong>The Logic:</strong> Store object reference IDs in the specific chunk they occupy and recalculate this every frame.</li>
+        <li><strong>The Result:</strong> Objects only check for collisions within their own chunk and neighboring chunks. This drastically reduces the computational overhead.</li>
+    </ul>
+
+    <h3>Resolving Collisions</h3>
+    <p>
+        Detection is only half the battle; we still need to <strong>resolve</strong> the collisions by changing object velocity and position appropriately:
+    </p>
+    <ol>
+        <li><strong>Position Correction:</strong> We calculate the distance between objects and compare it to their combined radii. If they overlap, we force them apart by the overlap distance until they are just touching.</li>
+        <li><strong>Impulse Calculation:</strong> Once separated, we calculate the bounce. By determining the impact relative to the hit angle, we apply an impulse that modifies velocity so objects bounce away rather than sticking together or sliding through one another.</li>
+    </ol>
+
+    <h3>Constraints and Friction</h3>
+    <p>
+        The world boundaries are defined by the screen edges. When a ball hits a wall, I don’t simply reverse the velocity; I <strong>dampen the factor by -0.2</strong>. This simulates energy loss, as no real-world object is perfectly bouncy. 
+    </p>
+    <p>
+        I also implemented a small <strong>"sleep" threshold</strong>: if the velocity drops below a certain level, it snaps to 0 to prevent visual jittering.
+    </p>
+
+    <div class="note-box">
+        <p><em><strong>Note:</strong> This is a foundational tool for understanding the basics. This version does not yet implement soft bodies, complex rigid bodies, or ropes/cloth.</em></p>
+    </div>
+
+    <p>
+        <strong>Recommended Reading:</strong><br>
+        <em>"Game Physics Engine Development: How to Build a Robust Commercial-Grade Physics Engine For Your Game"</em> by Ian Millington.
+    </p>
+
+    <div class="image-block">
+        <video controls autoplay muted loop>
+            <source src="showcase/solver.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <p class="caption">Test Sequence: PBD Constraint Stability</p>
+    </div>
+</article>
                 `
             },
             'cagi': {
