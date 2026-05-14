@@ -91,7 +91,23 @@
             border-left-color: var(--accent-color); 
         }
 
-        .image-block { border: 1px solid var(--line-color); margin: 2rem 0; padding: 15px; text-align: center; }
+        /* Fixed Image/Video Formatting */
+        .image-block { 
+            border: 1px solid var(--line-color); 
+            margin: 2rem 0; 
+            padding: 15px; 
+            text-align: center;
+            background: rgba(0,0,0,0.02);
+        }
+        
+        .image-block img, 
+        .image-block video { 
+            max-width: 100%; 
+            height: auto; 
+            display: block;
+            margin: 0 auto;
+        }
+
         .caption { font-size: 0.7rem; margin-top: 12px; color: #888; display: block; }
         body.cyber-mode .caption { color: var(--accent-color); }
 
@@ -187,12 +203,10 @@
 
         const toggle = document.getElementById('theme-toggle');
         toggle.addEventListener('click', () => {
-            const isCyber = document.body.classList.toggle('formal-mode'); // Adjusted to toggle formal on/off
             document.body.classList.toggle('cyber-mode');
             toggle.innerText = document.body.classList.contains('cyber-mode') ? "MODE: FORMAL" : "MODE: CYBER";
         });
 
-        // Initialize as formal by default
         window.onload = loadContent;
     </script>
 </body>
