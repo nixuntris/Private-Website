@@ -8,27 +8,31 @@
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;700&display=swap');
 
         :root {
-            /* Formal Theme (Base) */
-            --bg-color: #ffffff;
-            --grid-line: transparent;
-            --line-color: #1a1a1a;
-            --text-color: #1a1a1a;
-            --accent-color: #3366cc;
+            /* Pastels of Lavender - Formal Base Mode */
+            --bg-color: #CCDCFD;        /* Blue Cream */
+            --grid-line: rgba(187, 190, 254, 0.4); /* Pastel Light Indigo */
+            --line-color: #2D2F54;      /* Deep contrast indigo */
+            --text-color: #2D2F54;
+            --accent-color: #9EA3F5;    /* Nova */
+            --accent-2: #D099E2;        /* Light Orchid */
             --font-stack: 'Inter', system-ui, sans-serif;
             --container-bg: #ffffff;
-            --border-style: 1px solid #dddddd;
+            --border-style: 1px solid #BBBEFE;
+            --shadow-val: 0px 8px 24px rgba(158, 163, 245, 0.15);
         }
 
-        /* Blueprint Theme (Toggle) */
+        /* Pastels of Lavender - Blueprint Dream Mode */
         body.cyber-mode {
-            --bg-color: #001133;
-            --grid-line: rgba(0, 255, 255, 0.1);
-            --line-color: #00ffff;
-            --text-color: #e0f7fa;
-            --accent-color: #fff000;
+            --bg-color: #1F1936;        /* Deep Midnight Lavender */
+            --grid-line: rgba(232, 191, 251, 0.08); /* Clear Violet tint */
+            --line-color: #E8BFFB;      /* Clear Violet */
+            --text-color: #F2A5E8;      /* Alaina */
+            --accent-color: #9EA3F5;    /* Nova */
+            --accent-2: #D099E2;        /* Light Orchid */
             --font-stack: 'Space Mono', monospace;
-            --container-bg: rgba(0, 17, 51, 0.95);
-            --border-style: 2px solid var(--line-color);
+            --container-bg: rgba(45, 41, 74, 0.9);
+            --border-style: 2px dashed var(--line-color);
+            --shadow-val: 8px 8px 0px var(--accent-2);
         }
 
         body {
@@ -40,69 +44,91 @@
             color: var(--text-color);
             font-family: var(--font-stack);
             margin: 0; padding: 2rem;
-            transition: background 0.2s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         #theme-toggle {
             position: fixed; top: 20px; right: 20px; z-index: 2000;
-            padding: 8px 16px; cursor: pointer;
-            background: #000; color: #fff;
+            padding: 10px 20px; cursor: pointer;
+            background: #BBBEFE; color: #2D2F54;
             font-family: var(--font-stack); font-weight: bold;
             border: 2px solid var(--text-color);
-            border-radius: 4px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.2s;
         }
+        #theme-toggle:hover { background: #9EA3F5; }
         body.cyber-mode #theme-toggle { 
-            background: var(--line-color); 
-            color: var(--bg-color); 
+            background: var(--accent-2); 
+            color: #1F1936; 
             border-radius: 0;
+            box-shadow: 4px 4px 0px var(--text-color);
         }
 
         .container {
             max-width: 850px; margin: 0 auto;
             border: var(--border-style); padding: 2.5rem;
             background: var(--container-bg); position: relative;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 8px;
+            box-shadow: var(--shadow-val); border-radius: 12px;
+            backdrop-filter: blur(8px);
         }
         body.cyber-mode .container { 
-            box-shadow: none; 
             border-radius: 0; 
         }
 
-        header { border-bottom: 1px solid #dddddd; margin-bottom: 2rem; padding-bottom: 1.5rem; }
+        header { border-bottom: 2px solid #BBBEFE; margin-bottom: 2rem; padding-bottom: 1.5rem; }
         body.cyber-mode header { border-bottom: 2px double var(--line-color); }
 
-        .back-link { color: var(--accent-color); text-decoration: none; font-size: 0.8rem; display: inline-block; margin-bottom: 1rem; }
-        h1 { margin: 0; font-size: 1.8rem; color: var(--line-color); }
+        .back-link { color: var(--line-color); text-decoration: none; font-size: 0.85rem; font-weight: bold; display: inline-block; margin-bottom: 1rem; transition: color 0.2s; }
+        .back-link:hover { color: var(--accent-2); }
+        body.cyber-mode .back-link { color: var(--accent-color); }
+
+        h1 { margin: 0; font-size: 2rem; color: var(--text-color); }
+        body.cyber-mode h1 { text-transform: uppercase; letter-spacing: 1px; }
 
         .status-badge {
-            display: inline-block; margin-top: 10px;
-            border: 1px solid var(--accent-color); color: var(--accent-color);
-            padding: 2px 8px; font-size: 0.7rem; font-weight: bold;
+            display: inline-block; margin-top: 12px;
+            border: 1px solid var(--text-color); color: var(--text-color);
+            background: rgba(158, 163, 245, 0.2);
+            padding: 4px 10px; font-size: 0.75rem; font-weight: bold;
+            border-radius: 4px;
         }
+        body.cyber-mode .status-badge { border-color: var(--line-color); color: var(--line-color); background: transparent; border-radius: 0; }
 
-        .post-content { line-height: 1.6; font-size: 0.9rem; }
+        .post-content { line-height: 1.7; font-size: 0.95rem; }
         
-        .technical-specs {
-            background: #f9f9f9; border-left: 3px solid #000;
-            padding: 1.2rem; margin: 1.5rem 0; font-size: 0.8rem;
+        /* Note and tip structures */
+        .note-box {
+            background: #F2A5E820; border-left: 4px solid #D099E2;
+            padding: 1.2rem; margin: 1.5rem 0; font-size: 0.85rem;
+            border-radius: 0 8px 8px 0;
         }
-        body.cyber-mode .technical-specs { 
-            background: rgba(0, 255, 255, 0.05); 
-            border-left-color: var(--accent-color); 
+        body.cyber-mode .note-box { 
+            background: rgba(232, 191, 251, 0.05); 
+            border-left-color: var(--line-color); 
+            border-radius: 0;
         }
 
-        /* Scaled Image & Video Container */
+        hr { border: 0; height: 1px; background: #BBBEFE; margin: 2rem 0; }
+        body.cyber-mode hr { background: var(--line-color); }
+
+        ul, ol { padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+
+        /* Media Container styling */
         .image-block { 
             border: var(--border-style); 
-            margin: 2rem 0; 
+            margin: 2.5rem 0; 
             padding: 15px; 
             text-align: center;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            background: rgba(204, 220, 253, 0.2);
+            border-radius: 8px;
         }
+        body.cyber-mode .image-block { border-radius: 0; background: rgba(0,0,0,0.2); }
         
-        /* Forces media to stay within container and match widths */
         .image-block img, 
         .image-block video { 
             width: 100%; 
@@ -111,23 +137,27 @@
             display: block;
             margin: 0 auto;
             box-sizing: border-box;
+            border-radius: 4px;
         }
+        body.cyber-mode .image-block img,
+        body.cyber-mode .image-block video { border-radius: 0; }
 
-        .caption { font-size: 0.7rem; margin-top: 12px; color: #888; display: block; }
-        body.cyber-mode .caption { color: var(--accent-color); }
+        .caption { font-size: 0.75rem; margin-top: 4px; color: var(--text-color); opacity: 0.7; display: block; font-style: italic; }
+        body.cyber-mode .caption { color: var(--line-color); opacity: 1; font-family: var(--font-stack); }
 
-        footer { margin-top: 4rem; font-size: 0.65rem; text-align: center; opacity: 0.6; }
-        b { color: var(--accent-color); }
+        footer { margin-top: 4rem; font-size: 0.7rem; text-align: center; opacity: 0.6; font-family: 'Space Mono', monospace; }
+        strong, b { color: var(--line-color); }
+        body.cyber-mode strong, body.cyber-mode b { color: var(--line-color); text-shadow: 0 0 5px rgba(232, 191, 251, 0.3); }
     </style>
 </head>
 <body>
 
-    <button id="theme-toggle">MODE: CYBER</button>
+    <button id="theme-toggle">MODE: DREAM</button>
 
     <div class="container">
         <a href="index.html" class="back-link">&lt;&lt; Return to Index</a>
         <header>
-            <h1 id="postTitle">Loading project...</h1>
+            <h1 id="postTitle">Loading blueprint...</h1>
             <div class="status-badge">Under Construction</div>
         </header>
 
@@ -141,18 +171,97 @@
     <script>
         const projectLogs = {
             'voxel': {
-                title: "Voxel Rasterizer Architecture",
+                title: "Graphics: Custom Voxel Software Rasterizer",
                 content: `
-                    <p>This documentation is currently under construction. It details the implementation of a <b>Virtualized Geometry</b> pipeline. The code won't be open sourced because making it open source ready would take more time than I can give it while focusing on developing it. I wish to keep every open source repository maintained with high standard.</p>
+                    <p>
+                        This is the very first breakdown of my custom voxel rendering pipeline. Because the architecture involves a lot of moving parts, I’m breaking it up into smaller pieces. This segment focuses strictly on the core renderer, leaving the meshing, compression algorithms, physics, shadows for future posts. 
+                    </p>
+                    <p>
+                        The technique was originally inspired by virtualized geometry systems (think Unreal Engine's Nanite), but it has since diverged into something closer to point map rendering or point splatting.
+                    </p>
+
+                    <hr>
+
+                    <h3>Why Abandon Hardware Rasterization?</h3>
+                    <p>
+                        In graphics programming, it is well known that hardware rasterization (<strong>HWRast</strong>) faces major efficiency bottlenecks when dealing with ultra-dense, sub-pixel geometry.
+                    </p>
+                    <ul>
+                        <li><strong>The Problem:</strong> GPUs natively process pixels in 2x2 quads to calculate texture derivatives. If a triangle is so small that it only covers one pixel, the hardware still has to process all four pixels in that quad and throw three of them away.</li>
+                        <li><strong>The Alternative:</strong> Moving to a software rasterizer (<strong>SWRast</strong>) built on compute shaders frees the pipeline from these fixed hardware execution blocks. This flexibility is exactly why Nanite excels at microscopic geometric detail.</li>
+                    </ul>
+                    <p>
+                        Furthermore, because I am rendering voxels rather than traditional triangle meshes, I can generate geometry on demand from a single point. Each voxel only needs to store its position, material type, and face visibility—requiring far less data than 12 explicit triangles. While this is technically possible using standard hardware pipelines, managing it within a custom SWRast pipeline is vastly simpler.
+                    </p>
+
+                    <h3>Data Structure and Memory Layout</h3>
+                    <p>
+                        <em>(Note: In this context, a "mesh" simply refers to a grouped list of voxel points, not a traditional index/vertex buffer).</em>
+                    </p>
+                    <p>
+                        To keep the memory footprint microscopic, I split each mesh into "meshlets" of 64 localized points and apply a tight compression pass:
+                    </p>
+                    <ul>
+                        <li><strong>Position Packing:</strong> I calculate the bounding box for the 64-point group and subtract the center position from each point. This leaves relative coordinate values ranging strictly between 0 and 1024. By allocating 10 bits per axis, an entire (x, y, z) position packs neatly into a single <code>uint32_t</code>.</li>
+                        <li><strong>Metadata & Palette:</strong> For voxel attributes, I use palette compression. Each voxel stores a <code>uint16_t</code> material ID, allowing for 65,536 distinct colors—plenty of overhead for my needs.</li>
+                        <li><strong>Face Visibility:</strong> Visible faces are tracked via a simple 6-bit bitmask, where each bit represents a face direction (Front, Back, Left, Right, Top, Bottom).</li>
+                    </ul>
+
+                    <h3>Culling and Rasterization</h3>
+                    <p>
+                        Detection and exclusion happen hierarchically at the meshlet level before any pixels are filled:
+                    </p>
+                    <ol>
+                        <li><strong>Frustum Culling:</strong> Eliminates meshlets entirely outside the camera's field of view.</li>
+                        <li><strong>Occlusion Culling (Hi-Z):</strong> Checks the remaining meshlets against a Hierarchical Z-Buffer to see if they are hidden behind closer geometry.</li>
+                    </ol>
+                    <p>
+                        If a meshlet passes both checks, it is pushed to a global visibility buffer. During the final software rasterization step, the compute shader references a <strong>Look-Up Table (LUT)</strong> containing positional offsets for each face. This allows the shader to generate exact vertex positions on the fly and perform traditional triangle rendering with the generated data.
+                    </p>
+
+                    <h4>Optimizations & Specifics</h4>
+                    <ul>
+                        <li><strong>Fill Rate:</strong> I utilize checkerboard rendering paired with temporal reprojection to halve the number of raw pixels filled each frame.</li>
+                        <li><strong>Normals:</strong> To save memory, surface normals are not stored; they are calculated analytically at runtime.</li>
+                    </ul>
+
+                    <h3>Procedural Elements: Grass</h3>
+                    <p>
+                        Static geometry isn't the only thing the runtime handles; foliage utilizes a highly parallelized variant of this system.
+                    </p>
+                    <p>
+                        Instead of generating static voxels, I write a dedicated compute shader for each foliage type using custom, L-System-style procedural rules to generate grass blades on demand. These are rendered using simple billboard quads, using trigonometry functions within the shader to simulate realistic wind swaying.
+                    </p>
+
+                    <div class="note-box">
+                        <p><em><strong>Note:</strong> This is still a work in progress. I eventually want to factor in the underlying terrain slope and sun direction to dictate how the foliage organically grows, but I haven't had the time to implement it yet.</em></p>
+                    </div>
+
+                    <h3>Memory Management</h3>
+                    <p>
+                        Originally, the asset pipeline processed geometry in a single, monolithic pass: combining all data into one massive mesh before generating meshlets. However, even the smallest block update required massive CPU recalculations.
+                    </p>
+                    <p>
+                        To solve this, I transitioned to a sparse, chunk-based management system:
+                    </p>
+                    <ul>
+                        <li>Each world chunk handles its own mesh and cached geometry data independently.</li>
+                        <li>Upon a chunk update, <code>PreGenerateGPUData</code> is called to build and compress the data locally.</li>
+                        <li>During <code>UpdateGPUGeometry</code>, the engine allocates a Shader Storage Buffer Object (SSBO) with appropriate padding and uploads the compressed chunk data to the GPU.</li>
+                        <li>On subsequent frames, the manager simply verifies whether the total allocated pool memory has been exceeded. If it has, it destroys the original SSBO, allocates a larger memory block, and re-binds the resources.</li>
+                    </ul>
+
                     <div class="image-block">
                         <img src="showcase/enginerasterizer.png" alt="Rasterizer Interface">
                         <video controls autoplay muted loop>
                             <source src="showcase/physicsrasterizervid.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
                         </video>
-                        <span class="caption">Technical View: Volumetric Render Streams</span>
+                        <p class="caption">Test Sequence: SWRast Compute Pipeline Stability</p>
                     </div>
                 `
             },
+            
             'path-tracer': {
                 title: "Path Tracer Development",
                 content: `
@@ -167,62 +276,60 @@
                 title: "Physics: Position Based Dynamics",
                 content: `
                     <article id="physics-pbd">
-    <h2>Physics: Position Based Dynamics</h2>
+                        <p>
+                            This is the very first iteration of my physics solver. I am open sourcing it because others may find it a useful learning resource. It utilizes a system similar to <strong>Position Based Dynamics (PBD)</strong> and impulse-based collision resolving. 
+                        </p>
 
-    <p>
-        This is the very first iteration of my physics solver. I am open sourcing it because others may find it a useful learning resource. It utilizes a system similar to <strong>Position Based Dynamics (PBD)</strong> and impulse-based collision resolving. 
-    </p>
+                        <p>
+                            To keep things simple and readable for anyone following my logic, I’ve kept the project single-threaded, though it uses a few basic tricks to stay performant.
+                        </p>
 
-    <p>
-        To keep things simple and readable for anyone following my logic, I’ve kept the project single-threaded, though it uses a few basic tricks to stay performant.
-    </p>
+                        <hr>
 
-    <hr>
+                        <h3>Spatial Partitioning</h3>
+                        <p>
+                            In a naive physics engine, every object checks collisions with every other object. If you have 1,000 balls, that results in 1,000<sup>2</sup> (1,000,000) checks per frame. That’s wasteful when you can implement a simple <strong>chunk-based partitioning system</strong>.
+                        </p>
+                        <ul>
+                            <li><strong>The Concept:</strong> Define a grid size (e.g., 40x40 units).</li>
+                            <li><strong>The Logic:</strong> Store object reference IDs in the specific chunk they occupy and recalculate this every frame.</li>
+                            <li><strong>The Result:</strong> Objects only check for collisions within their own chunk and neighboring chunks. This drastically reduces the computational overhead.</li>
+                        </ul>
 
-    <h3>Spatial Partitioning</h3>
-    <p>
-        In a naive physics engine, every object checks collisions with every other object. If you have 1,000 balls, that results in 1,000<sup>2</sup> (1,000,000) checks per frame. That’s wasteful when you can implement a simple <strong>chunk-based partitioning system</strong>.
-    </p>
-    <ul>
-        <li><strong>The Concept:</strong> Define a grid size (e.g., 40x40 units).</li>
-        <li><strong>The Logic:</strong> Store object reference IDs in the specific chunk they occupy and recalculate this every frame.</li>
-        <li><strong>The Result:</strong> Objects only check for collisions within their own chunk and neighboring chunks. This drastically reduces the computational overhead.</li>
-    </ul>
+                        <h3>Resolving Collisions</h3>
+                        <p>
+                            Detection is only half the battle; we still need to <strong>resolve</strong> the collisions by changing object velocity and position appropriately:
+                        </p>
+                        <ol>
+                            <li><strong>Position Correction:</strong> We calculate the distance between objects and compare it to their combined radii. If they overlap, we force them apart by the overlap distance until they are just touching.</li>
+                            <li><strong>Impulse Calculation:</strong> Once separated, we calculate the bounce. By determining the impact relative to the hit angle, we apply an impulse that modifies velocity so objects bounce away rather than sticking together or sliding through one another.</li>
+                        </ol>
 
-    <h3>Resolving Collisions</h3>
-    <p>
-        Detection is only half the battle; we still need to <strong>resolve</strong> the collisions by changing object velocity and position appropriately:
-    </p>
-    <ol>
-        <li><strong>Position Correction:</strong> We calculate the distance between objects and compare it to their combined radii. If they overlap, we force them apart by the overlap distance until they are just touching.</li>
-        <li><strong>Impulse Calculation:</strong> Once separated, we calculate the bounce. By determining the impact relative to the hit angle, we apply an impulse that modifies velocity so objects bounce away rather than sticking together or sliding through one another.</li>
-    </ol>
+                        <h3>Constraints and Friction</h3>
+                        <p>
+                            The world boundaries are defined by the screen edges. When a ball hits a wall, I don’t simply reverse the velocity; I <strong>dampen the factor by -0.2</strong>. This simulates energy loss, as no real-world object is perfectly bouncy. 
+                        </p>
+                        <p>
+                            I also implemented a small <strong>"sleep" threshold</strong>: if the velocity drops below a certain level, it snaps to 0 to prevent visual jittering.
+                        </p>
 
-    <h3>Constraints and Friction</h3>
-    <p>
-        The world boundaries are defined by the screen edges. When a ball hits a wall, I don’t simply reverse the velocity; I <strong>dampen the factor by -0.2</strong>. This simulates energy loss, as no real-world object is perfectly bouncy. 
-    </p>
-    <p>
-        I also implemented a small <strong>"sleep" threshold</strong>: if the velocity drops below a certain level, it snaps to 0 to prevent visual jittering.
-    </p>
+                        <div class="note-box">
+                            <p><em><strong>Note:</strong> This is a foundational tool for understanding the basics. This version does not yet implement soft bodies, complex rigid bodies, or ropes/cloth. Unlike my current work in progress one. </em></p>
+                        </div>
 
-    <div class="note-box">
-        <p><em><strong>Note:</strong> This is a foundational tool for understanding the basics. This version does not yet implement soft bodies, complex rigid bodies, or ropes/cloth. Unlike my current work in progress one. </em></p>
-    </div>
+                        <p>
+                            <strong>Recommended Reading:</strong><br>
+                            <em>"Game Physics Engine Development: How to Build a Robust Commercial-Grade Physics Engine For Your Game"</em> by Ian Millington.
+                        </p>
 
-    <p>
-        <strong>Recommended Reading:</strong><br>
-        <em>"Game Physics Engine Development: How to Build a Robust Commercial-Grade Physics Engine For Your Game"</em> by Ian Millington.
-    </p>
-
-    <div class="image-block">
-        <video controls autoplay muted loop>
-            <source src="showcase/solver.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <p class="caption">Test Sequence: PBD Constraint Stability</p>
-    </div>
-</article>
+                        <div class="image-block">
+                            <video controls autoplay muted loop>
+                                <source src="showcase/solver.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <p class="caption">Test Sequence: PBD Constraint Stability</p>
+                        </div>
+                    </article>
                 `
             },
             'cagi': {
@@ -255,7 +362,7 @@
         const toggle = document.getElementById('theme-toggle');
         toggle.addEventListener('click', () => {
             document.body.classList.toggle('cyber-mode');
-            toggle.innerText = document.body.classList.contains('cyber-mode') ? "MODE: FORMAL" : "MODE: CYBER";
+            toggle.innerText = document.body.classList.contains('cyber-mode') ? "MODE: FORMAL" : "MODE: DREAM";
         });
 
         window.onload = loadContent;
