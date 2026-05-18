@@ -8,29 +8,29 @@
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;700&display=swap');
 
         :root {
-            /* Formal Theme (Now Base) */
-            --bg-color: #ffffff;
-            --text-color: #1a1a1a;
-            --accent-1: #000000;
-            --accent-2: #3366cc;
-            --accent-3: #f0f0f0;
+            /* Pastels of Lavender - Formal Base Mode */
+            --bg-color: #CCDCFD;        /* Blue Cream */
+            --text-color: #2D2F54;      /* Deep contrast indigo for text */
+            --accent-1: #9EA3F5;       /* Nova */
+            --accent-2: #D099E2;       /* Light Orchid */
+            --accent-3: #E8BFFB;       /* Clear Violet */
             --card-bg: #ffffff;
             --font-stack: 'Inter', system-ui, sans-serif;
-            --border-val: 1px solid #dddddd;
-            --shadow-val: 0px 4px 15px rgba(0,0,0,0.05);
+            --border-val: 1px solid #BBBEFE; /* Pastel Light Indigo */
+            --shadow-val: 0px 8px 24px rgba(158, 163, 245, 0.15);
         }
 
-        /* Cyberpunk Theme (Now the Toggle) */
+        /* Pastels of Lavender - Lav-Fi Dream Mode */
         body.cyber-mode {
-            --bg-color: #050112;
-            --text-color: #ffffff;
-            --accent-1: #ff00ff;
-            --accent-2: #00ffff;
-            --accent-3: #fff000;
-            --card-bg: rgba(0, 0, 0, 0.95);
+            --bg-color: #1F1936;        /* Deep Midnight Lavender */
+            --text-color: #F2A5E8;      /* Alaina */
+            --accent-1: #9EA3F5;       /* Nova */
+            --accent-2: #E8BFFB;       /* Clear Violet */
+            --accent-3: #BBBEFE;       /* Pastel Light Indigo */
+            --card-bg: rgba(45, 41, 74, 0.85);
             --font-stack: 'Space Mono', monospace;
-            --border-val: 4px solid var(--text-color);
-            --shadow-val: 12px 12px 0px var(--accent-1);
+            --border-val: 3px solid #D099E2; /* Light Orchid */
+            --shadow-val: 8px 8px 0px #9EA3F5; /* Nova Shadow */
         }
 
         body {
@@ -38,7 +38,7 @@
             color: var(--text-color);
             font-family: var(--font-stack);
             margin: 0; padding: 2rem;
-            transition: background 0.2s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         /* Hide effects by default (Formal) */
@@ -48,7 +48,7 @@
             display: none;
         }
 
-        /* Show effects in Cyber Mode */
+        /* Show effects in Dream Mode */
         body.cyber-mode .bg-layer, 
         body.cyber-mode #chaos-field {
             display: block !important;
@@ -57,12 +57,12 @@
         body.cyber-mode::after {
             display: block;
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.95) 100%);
+            background: radial-gradient(circle, transparent 20%, rgba(31, 25, 54, 0.8) 100%);
             pointer-events: none; z-index: 60;
         }
 
-        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(to bottom, #1a012a 0%, #6e002e 40%, #8e5a00 100%); }
-        .grid-floor { position: absolute; width: 200%; height: 200%; bottom: -50%; left: -50%; background-image: linear-gradient(rgba(255, 0, 255, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 255, 0.3) 1px, transparent 1px); background-size: 50px 50px; transform: perspective(500px) rotateX(60deg); animation: move-grid 3s linear infinite; }
+        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(to bottom, #1F1936 0%, #2D2F54 50%, #D099E2 100%); }
+        .grid-floor { position: absolute; width: 200%; height: 200%; bottom: -50%; left: -50%; background-image: linear-gradient(rgba(232, 191, 251, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(232, 191, 251, 0.15) 1px, transparent 1px); background-size: 50px 50px; transform: perspective(500px) rotateX(60deg); animation: move-grid 4s linear infinite; }
         @keyframes move-grid { from { background-position: 0 0; } to { background-position: 0 50px; } }
 
         .chess-debris { position: fixed; z-index: 1; pointer-events: none; opacity: 0; animation: drift-chaos var(--duration) linear infinite; }
@@ -79,67 +79,73 @@
             border: var(--border-val);
             padding: 2.5rem; margin-bottom: 3rem;
             box-shadow: var(--shadow-val);
+            backdrop-filter: blur(8px);
         }
 
-        h1 { margin: 0; font-size: clamp(2rem, 6vw, 4rem); letter-spacing: -1px; }
-        body.cyber-mode h1 { text-transform: uppercase; letter-spacing: normal; }
+        h1 { margin: 0; font-size: clamp(2rem, 6vw, 4rem); letter-spacing: -1px; color: var(--text-color); }
+        body.cyber-mode h1 { text-transform: uppercase; letter-spacing: 2px; text-shadow: 2px 2px 0px var(--accent-1); }
 
-        .bio { margin-top: 1rem; border-left: 4px solid var(--accent-2); padding-left: 1.5rem; line-height: 1.6; opacity: 0.9; }
+        .bio { margin-top: 1rem; border-left: 4px solid var(--accent-1); padding-left: 1.5rem; line-height: 1.6; opacity: 0.9; }
 
         #theme-toggle {
             position: fixed; top: 20px; right: 20px; z-index: 2000;
-            padding: 8px 16px; cursor: pointer;
-            background: #000; color: #fff;
+            padding: 10px 20px; cursor: pointer;
+            background: #BBBEFE; color: #2D2F54;
             font-family: var(--font-stack); font-weight: bold;
             border: 2px solid var(--text-color);
-            border-radius: 4px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.2s;
         }
-        body.cyber-mode #theme-toggle { background: var(--accent-2); color: #000; border-radius: 0; }
+        #theme-toggle:hover { background: #9EA3F5; }
+        body.cyber-mode #theme-toggle { background: var(--accent-2); color: #1F1936; border-radius: 0; box-shadow: 4px 4px 0px var(--text-color); }
 
         .label {
             display: inline-block; padding: 0.5rem 1rem; font-weight: bold;
-            margin: 2rem 0 1rem 0; border-bottom: 2px solid #000; padding-left: 0;
+            margin: 2rem 0 1rem 0; border-bottom: 3px solid var(--accent-1); padding-left: 0;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        body.cyber-mode .label { background: var(--accent-2); color: #000; border-bottom: none; padding-left: 1rem; }
+        body.cyber-mode .label { background: var(--accent-2); color: #1F1936; border-bottom: none; padding-left: 1rem; }
 
         .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 
         .card {
             background: var(--card-bg); border: var(--border-val);
             padding: 1.5rem; position: relative; box-shadow: var(--shadow-val);
-            transition: transform 0.2s; display: flex; flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column;
+            backdrop-filter: blur(4px);
         }
         .card:hover { transform: translateY(-5px); }
         
-        .card h3 { margin-top: 0; color: var(--accent-2); font-size: 1.2rem; }
-        body.cyber-mode .card h3 { background: var(--text-color); color: var(--bg-color); display: inline-block; padding: 2px 8px; font-size: 1rem; }
+        .card h3 { margin-top: 0; color: var(--text-color); font-size: 1.3rem; }
+        body.cyber-mode .card h3 { background: var(--text-color); color: #1F1936; display: inline-block; padding: 4px 10px; font-size: 1rem; }
 
-        .desc { font-size: 0.9rem; line-height: 1.5; margin: 1rem 0; flex-grow: 1; }
+        .desc { font-size: 0.95rem; line-height: 1.5; margin: 1rem 0; flex-grow: 1; opacity: 0.85; }
         
         .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn { border: 1px solid #ccc; border-radius: 4px; color: #444; text-decoration: none; padding: 5px 12px; font-size: 0.75rem; font-weight: bold; cursor: pointer; background: transparent; transition: all 0.2s; }
-        .btn:hover { background: #f0f0f0; color: #000; border-color: #000; }
+        .btn { border: 1px solid var(--accent-1); border-radius: 6px; color: var(--text-color); text-decoration: none; padding: 6px 14px; font-size: 0.8rem; font-weight: bold; cursor: pointer; background: transparent; transition: all 0.2s; }
+        .btn:hover { background: var(--accent-3); border-color: var(--accent-2); }
         
         body.cyber-mode .btn { border: 1px solid var(--text-color); color: var(--text-color); text-transform: uppercase; border-radius: 0; }
-        body.cyber-mode .btn:hover { background: var(--text-color); color: var(--bg-color); }
+        body.cyber-mode .btn:hover { background: var(--text-color); color: #1F1936; }
 
-        .card-icon { display: none; position: absolute; top: 1rem; right: 1rem; height: 24px; filter: invert(1); }
-        body.cyber-mode .card-icon { display: block; }
+        .card-icon { display: none; position: absolute; top: 1rem; right: 1rem; height: 24px; filter: invert(70%) sepia(20%) saturate(1200%) hue-rotate(230deg); }
+        body.cyber-mode .card-icon { display: block; filter: invert(90%) sepia(10%) saturate(2000%) hue-rotate(270deg); }
 
-        .archived { opacity: 0.6; }
+        .archived { opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <button id="theme-toggle">MODE: CYBER</button>
+    <button id="theme-toggle">MODE: DREAM</button>
 
     <div class="bg-layer"><div class="grid-floor"></div></div>
     <div id="chaos-field"></div>
 
     <div class="container">
         <header>
-            <h1>Lixuntris</h1>
-            <div class="bio">Low-level engine development enthusiast. Exploring rendering and physics simulations. You can contact me over discord [@] spotteddudette</div>
+            <h1>Nixuntris</h1>
+            <div class="bio">I am a low-level engine development enthusiast. Exploring rendering and physics simulations. My special interest are voxels. </div>
         </header>
 
         <div class="label">Current Projects</div>
@@ -147,7 +153,7 @@
             <div class="card">
                 <img class="card-icon" src="https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/cubes.png">
                 <h3>Voxel Rasterizer</h3>
-                <p class="desc">A software rendering engine utilizing Virtualized Geometry and 64-bit chunk addressing to bypass traditional triangle bottlenecks.</p>
+                <p class="desc">A software rendering engine utilizing points map for incredibly fast rasterization.</p>
                 <div class="btn-row">
                     <a href="blueprint.html?id=voxel" class="btn">Specifications</a>
                 </div>
@@ -155,7 +161,7 @@
             <div class="card">
                 <img class="card-icon" src="https://www.khronos.org/assets/images/api_logos/opengl.svg">
                 <h3>Path Tracer</h3>
-                <p class="desc">Implementing light transport algorithms with a focus on efficient BVH traversal and diffuse bounce evaluation.</p>
+                <p class="desc">Implementing light transport algorithms with a focus on deformable voxels.</p>
                 <div class="btn-row">
                     <a href="blueprint.html?id=path-tracer" class="btn">Specifications</a>
                 </div>
@@ -169,28 +175,36 @@
                     <a href="blueprint.html?id=physics_pbd" class="btn">Specifications</a>
                 </div>
             </div>
-        <div class="card">
+            <div class="card">
                 <h3>CA & CAGI</h3>
-                <p class="desc">Early exploration into Cellular Automata (CAGI).</p>
+                <p class="desc">Early exploration into Cellular Automata (CAGI). </p>
                 <div class="btn-row">
                     <a href="https://github.com/nixuntris/Cellular-Automata-Global-Illumination" class="btn">Source Code</a>
                     <a href="blueprint.html?id=cagi" class="btn">Specifications</a>
                 </div>
             </div>
         </div>
-        <div class="label">Machine Learning Research(Future)</div>
+
+        <div class="label">Future Projects</div>
         <div class="project-grid">
             <div class="card">
                 <img class="card-icon" src="https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/cpu.png">
                 <h3>Distributed Computing Algorithms</h3>
-                <p class="desc"> Implementantion of basic algorithms from scratch using distributed computing.</p>
+                <p class="desc">Implementation of basic algorithms from scratch using distributed computing.</p>
                 <div class="btn-row">
                 </div>
             </div>
             <div class="card">
                 <img class="card-icon" src="https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/environment.png">
                 <h3>Voxel Ecosystem</h3>
-                <p class="desc">Modeling data-driven growth and environmental changes using optimized voxel data structures.</p>
+                <p class="desc">Simulating different ecosystems using my voxel engine to test procedural creatures and diffferent animal AIs.</p>
+                <div class="btn-row">
+                </div>
+            </div>
+            <div class="card">
+                <img class="card-icon" src="https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/environment.png">
+                <h3>Training Neural Networks</h3>
+                <p class="desc">Ranging from LLMs to small neural networks trained on basic games like tetris, dino, snake etc...</p>
                 <div class="btn-row">
                 </div>
             </div>
@@ -198,7 +212,6 @@
 
         <div class="label">Archive</div>
         <div class="project-grid">
-            
             <div class="card archived">
                 <h3>Voxel Ray Tracer</h3>
                 <p class="desc">Legacy ray marching implementation, superseded by the current path tracer architecture.</p>
@@ -212,12 +225,14 @@
         const toggle = document.getElementById('theme-toggle');
         toggle.addEventListener('click', () => {
             const isCyber = document.body.classList.toggle('cyber-mode');
-            toggle.innerText = isCyber ? "MODE: FORMAL" : "MODE: CYBER";
+            toggle.innerText = isCyber ? "MODE: FORMAL" : "MODE: DREAM";
         });
 
-        // Background chess pieces (generated but hidden by default)
+        // Background chess pieces (adapted for Lavender theme)
         const pieces = ['♟', '♜', '♞', '♝', '♛', '♚'];
         const chaosField = document.getElementById('chaos-field');
+        const colors = ['#E8BFFB', '#F2A5E8', '#9EA3F5', '#BBBEFE'];
+        
         for (let i = 0; i < 35; i++) {
             const p = document.createElement('div');
             p.className = 'chess-debris';
@@ -227,10 +242,10 @@
             p.style.setProperty('--x-end', (Math.random() * 100) + "vw");
             p.style.setProperty('--duration', (Math.random() * 15 + 10) + "s");
             p.style.setProperty('--rotation', "360deg");
-            p.style.setProperty('--max-opacity', Math.random() * 0.2);
+            p.style.setProperty('--max-opacity', Math.random() * 0.25);
             p.style.left = x; 
             p.style.fontSize = (Math.random() * 3 + 1) + "rem";
-            p.style.color = "rgba(255,255,255,0.3)";
+            p.style.color = colors[Math.floor(Math.random() * colors.length)];
             p.style.animationDelay = (Math.random() * -20) + "s";
             chaosField.appendChild(p);
         }
