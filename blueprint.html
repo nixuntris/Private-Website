@@ -257,11 +257,84 @@
                             <source src="showcase/physicsrasterizervid.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
-                        <p class="caption">Test Sequence: SWRast Compute Pipeline Stability</p>
                     </div>
+                    <hr>
+
+                    <h3>Project Update: Dynamic Editing </h3>
+                    <p>
+                        
+                    </p>
+
+                        <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 1.5rem;">
+                        </p>
+                        <a href="?id=voxel-phase2" class="back-link" style="margin-bottom: 0; padding: 10px 20px; border: 2px solid var(--text-color); background: var(--accent-color); color: #2D2F54; border-radius: 4px; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Read Dynamic Editing &gt;&gt;
+                        </a>
                 `
             },
-            
+            'voxel-phase2' : {
+                title: "Dynamic Editing",
+                content: `
+                    <p>
+                        In this breakdown, I will detail how the pipeline dynamically updates mesh data while circumventing the performance bottlenecks inherently associated with virtualized geometry updates. 
+                    </p>
+                    <p>
+                        Because the engine is built on OpenGL, allowing asynchronous memory updates during the primary render pass would introduce an unsustainable memory tax to store multiple geometry states. Instead, the system splits geometry modifications into two distinct pipelines: a static terrain system driven by precalculated decals, and a dynamic, fluid simulation pipeline utilizing a GPU-driven brickmap structure.
+                    </p>
+
+                    <hr>
+
+                    <h3>Static Geometry Modification: Pre-Meshed Decals</h3>
+                    <p>
+                        To alter static terrain without triggering costly, real-time CPU or GPU re-meshing routines across entire chunks, the engine utilizes a decentralized decal system.
+                    </p>
+                    <ul>
+                        <li><strong>The Approach:</strong> Common geometric modifications—such as a 5^3 volumetric cluster of grass—are pre-calculated and cached as isolated mesh assets.</li>
+                        <li><strong>The Execution:</strong> When a structural edit occurs, the underlying chunk data is updated logically, but the visual geometry is appended via localized instanced draw calls matching the decal's transform. This keeps terrain edits cheap and avoids destructive buffer allocations.</li>
+                    </ul>
+
+                    <h3>Dynamic Simulation: GPU Brickmap Architecture</h3>
+                    <p>
+                        For the <em>Sandspiel</em> (falling-sand style fluid and granular physics) portion of the engine, static caching is impossible.
+                    </p>
+                    <p>
+                        Instead of managing a traditional CPU-side sparse voxel octree, the voxel data is stored entirely on the GPU utilizing a flat <strong>brickmap</strong> structure. In this architecture, individual world chunks function directly as the primary data nodes rather than being subdivided by parent nodes. 
+                    </p>
+
+                    <div class="note-box">
+                        <p><em><strong>Implementation Detail:</strong> Volumetric voxel data within each node is stored and accessed using bindless textures. </em></p>
+                    </div>
+
+                    <h3>Meshless Rasterization & Batching Pipeline</h3>
+                    <p>
+                        Rather than generating complex, tightly packed meshlet structures for the simulation data, the compute shader skips the meshlet creation pass entirely. It performs raw face culling directly on individual voxels in parallel:
+                    </p>
+                    <ol>
+                        <li><strong>Coarse Frustum Culling:</strong> Visibility evaluation is scaled out, tracking and discarding geometry strictly at a macro 64^3 volume boundaries.</li>
+                        <li><strong>Multi-Chunk Batching:</strong> To minimize state changes, multiple simulation chunks are combined into a single, unified draw call per fluid type.</li>
+                    </ol>
+                    <p>
+                        The shader achieves this by receiving two compact arrays via uniform buffers:
+                    </p>
+                    <ul>
+                        <li><code>vec3 chunk_positions[16]</code> — Tracking individual world-space offsets for up to 16 active simulation nodes.</li>
+                        <li><code>uvec2 image_handles[16]</code> — Storing the corresponding bindless image data handles for each volumetric node.</li>
+                    </ul>
+                    <p>
+                        During the software rasterization stage, local voxel positions are offset on the fly using these arrays, matching the exact rasterization pass. It is a streamlined, highly performant solution to real-time volumetric updates—inspired heavily by Gabe Rundlett's work on gvox.
+                        It's used to simulate falling as well, since I pass along neighbouring chunks. (In a different pass).
+                    </p>
+
+                    <div class="image-block">
+                        <img src="showcase/CA.png" alt="Rasterizer Interface">
+                    </div>
+                    <div class="note-box">
+                        <p><em><strong>Note:</strong> This is still a work in progress. I want to implement dirty chunks in the future and better batching for physics simulation. I am skimping over it since it's not a very novel or complex implementantion. </em></p>
+                    </div>
+
+                    <hr>
+                `
+            },
             'path-tracer': {
                 title: "Path Tracer Development",
                 content: `
@@ -327,7 +400,6 @@
                                 <source src="showcase/solver.mp4" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
-                            <p class="caption">Test Sequence: PBD Constraint Stability</p>
                         </div>
                     </article>
                 `
