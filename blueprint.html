@@ -174,7 +174,7 @@
                 title: "Graphics: Custom Voxel Software Rasterizer",
                 content: `
                     <p>
-                        This is the very first breakdown of my custom voxel rendering pipeline. Because the architecture involves a lot of moving parts, I’m breaking it up into smaller pieces. This segment focuses strictly on the core renderer, leaving the meshing, compression algorithms, physics, shadows for future posts. 
+                        This is the very first breakdown of my custom voxel rendering pipeline. Because the architecture involves a lot of moving parts, I'm breaking it up into smaller pieces. This segment focuses strictly on the core renderer, leaving the meshing, compression algorithms, physics, shadows for future posts. 
                     </p>
                     <p>
                         The technique was originally inspired by virtualized geometry systems (think Unreal Engine's Nanite), but it has since diverged into something closer to point map rendering or point splatting.
@@ -335,15 +335,210 @@
                     <hr>
                 `
             },
-            'path-tracer': {
-                title: "Path Tracer Development",
+            'raytracer': {
+                title: "Graphics: CPU Voxel Ray Tracing",
                 content: `
-                    <p>Under construction. This section details compute ray tracing with global illumination. The code won't be open sourced because making it open source ready would take more time than I can give it while focusing on developing it. I wish to keep every open source repository maintained with high standard.</p>
-                    <div class="image-block">
-                        <img src="showcase/corenlsbox.png" alt="Cornell Box Evaluation">
-                        <span class="caption">Simulation: Diffuse Rebound Analysis</span>
+                    <p>
+                        Over the summer I've been working on a few small side projects as part of a hackathon. One of those projects is a CPU-based voxel ray tracer, which I started mostly as a playground for experimenting with rendering and optimization techniques.
+                    </p>
+                    <p>
+                        Part of the motivation was simply curiosity: I wanted to see how far I could push my Ryzen 9 5950X on a workload that is realistically much better suited to a GPU. This isn't intended to be a CPU vs GPU argument; it's just a fun experiment in making something progressively less slow.
+                    </p>
+
+                    <hr>
+
+                    <h3>Hierarchical Distance Fields</h3>
+                    <p>
+                        The first implementation was a simple ray marcher. Instead of advancing through every individual voxel, I stored conservative distance information for 32<sup>3</sup> regions. If the current region is known to be empty, the ray can safely jump forward rather than checking everything in between.
+                    </p>
+                    <p>
+                        A single coarse level works well in large empty spaces, but becomes much less useful close to geometry. I therefore added progressively finer 16<sup>3</sup>, 8<sup>3</sup> and 4<sup>3</sup> layers. During traversal I query the applicable levels and use the largest safe step.
+                    </p>
+                    <div class="note-box">
+                        <p><em><strong>Important:</strong> The distance values must remain conservative. Underestimating a distance only costs performance; overestimating it can make a ray skip geometry entirely.</em></p>
                     </div>
+
+                    <h3>Multithreading</h3>
+                    <p>
+                        Primary rays are largely independent, so the first CPU-side parallelization was deliberately simple. I used OpenMP over the image with <code>#pragma omp parallel for collapse(2)</code>, allowing the combined X/Y iteration space to be distributed between worker threads.
+                    </p>
+                    <p>
+                        It isn't sophisticated scheduling, but it was essentially free CPU utilization and gave me a useful baseline before worrying about lower-level optimization.
+                    </p>
+
+                    <h3>Checkerboard Rendering and Reprojection</h3>
+                    <p>
+                        Making each ray cheaper is useful, but another option is to simply trace fewer rays. I alternate between the two halves of a checkerboard pattern using <code>(x + y + frame) % 2</code>, meaning each pixel only needs a completely new primary ray every second frame.
+                    </p>
+                    <p>
+                        Keeping the untouched pixels in their old screen positions breaks down when the camera moves, so the other half of the image is temporally reused through reprojection. This keeps the ray tracer at full output resolution while reducing how often each pixel requires a fresh traversal.
+                    </p>
+
+                    <h3>A Failed Low-Resolution Pass</h3>
+                    <div class="image-block">
+                        <img src="showcase/broken.webp" alt="Broken Low Resolution Pass">
+                        <span class="caption">Broken Low Res</span>
+                    </div>
+                    <p>
+                        One of my first traversal optimizations was a low-resolution pass. The idea was to trace a small number of coarse rays and use them to give the full-resolution rays a better starting distance.
+                    </p>
+                    <p>
+                        The first implementation managed to be both slower and worse looking. It biased the image, produced visible pixelation, and I later found that it was accelerating the rays incorrectly. After trying to fix it for a while, I got annoyed and deleted the entire pass.
+                    </p>
+                    <p>
+                        That ended up being useful, because it forced me to look more closely at the traversal itself.
+                    </p>
+
+                    <h3>Hierarchical DDA</h3>
+                    <p>
+                        The distance fields worked well whenever they could provide a useful jump, but the old fallback assumed the ray needed to advance by a very small amount. Failing to obtain a distance-field jump does not necessarily mean that the ray needs to move one voxel at a time; it may still be inside a known-empty 32<sup>3</sup>, 16<sup>3</sup>, 8<sup>3</sup> or 4<sup>3</sup> cell.
+                    </p>
+                    <p>
+                        I therefore added a multi-level DDA fallback using the same hierarchy. The two traversal mechanisms have different jobs:
+                    </p>
+                    <ul>
+                        <li><strong>Distance Field:</strong> Skip by a conservative known-safe distance.</li>
+                        <li><strong>DDA:</strong> If that fails, move directly to the boundary of the largest usable empty cell.</li>
+                    </ul>
+                    <p>
+                        This lets the spatial hierarchy remain useful even when the distance values themselves stop producing large steps.
+                    </p>
+
+                    <h3>Reworking the DDA Math</h3>
+                    <p>
+                        Conventional voxel DDA commonly stores a <code>tDelta</code> and accumulated <code>tMax</code> for each axis, then determines which axis boundary is crossed next. For this renderer I don't actually need to know which axis won; I only need the distance along the ray to the nearest boundary.
+                    </p>
+                    <p>
+                        Because the hierarchy uses power-of-two cell sizes, I can cheaply align the current voxel coordinate to the origin of its cell:
+                    </p>
+                    <div class="note-box">
+                        <code>
+                            bx = ix &amp; ~(cellSize - 1);<br>
+                            by = iy &amp; ~(cellSize - 1);<br>
+                            bz = iz &amp; ~(cellSize - 1);
+                        </code>
+                    </div>
+                    <p>
+                        I calculate the reciprocal ray direction once, then use the sign of each component to select the appropriate cell face arithmetically. For X:
+                    </p>
+                    <div class="note-box">
+                        <code>float ox = (sx + 1.0f) * 0.5f * cellSize;</code>
+                    </div>
+                    <p>
+                        Since <code>sx</code> is either -1 or +1, <code>ox</code> becomes either zero or <code>cellSize</code>. The parametric distance to each candidate boundary is then:
+                    </p>
+                    <div class="note-box">
+                        <code>
+                            Tx = (bx + ox - px) * (1/dx)<br>
+                            Ty = (by + oy - py) * (1/dy)<br>
+                            Tz = (bz + oz - pz) * (1/dz)
+                        </code>
+                    </div>
+                    <p>
+                        The traversal step becomes <code>t += min(Tx, Ty, Tz) + epsilon</code>. Instead of explicitly selecting an axis and updating its DDA state, I advance the continuous ray parameter and reconstruct the position on the next iteration using <code>P(t) = origin + direction * t</code>.
+                    </p>
+                    <p>
+                        The same calculation works for 1<sup>3</sup>, 4<sup>3</sup>, 8<sup>3</sup>, 16<sup>3</sup> and 32<sup>3</sup> cells simply by changing <code>cellSize</code>. The next-boundary calculation is also largely branchless with respect to ray direction and axis selection, making the arithmetic reasonably SIMD friendly.
+                    </p>
+
+                    <h3>The Low-Resolution Pass, Again</h3>
+                    <div class="image-block">
+                        <img src="showcase/firstlight.webp" alt="Working Full Resolution Rendering">
+                        <span class="caption">Working Full Res</span>
+                    </div>
+                    <p>
+                        After changing the underlying traversal I returned to the low-resolution pass. This time a coarse sample represents a group of full-resolution rays rather than pretending the entire block follows exactly the same direction.
+                    </p>
+                    <p>
+                        I estimate the directional divergence across the block, effectively creating a cone which grows with distance. A step safe for the centre ray is not automatically safe for every ray represented by that cone, so I subtract the cone radius from the available empty-space distance before advancing.
+                    </p>
+                    <p>
+                        The result is a conservative starting distance which can be shared with the full-resolution rays, allowing many of them to begin much closer to the first region where geometry can matter. The visual problem from the original implementation did not return; I never isolated its exact cause, so I'm not going to invent one.
+                    </p>
+
+                    <h3>Occupancy Masks</h3>
+                    <p>
+                        Once traversal became faster, accessing voxel data itself became relatively expensive. Most traversal queries only need to answer one question: <strong>is there a voxel here?</strong>
+                    </p>
+                    <p>
+                        I therefore separated occupancy from the actual voxel data. Each voxel is represented by one bit, allowing 64 occupancy states to fit in a single 64-bit integer. If the bit is not set, the renderer never needs to touch the corresponding voxel payload.
+                    </p>
+                    <p>
+                        Identical occupancy maps can also share the same underlying allocation instead of storing duplicate bitmaps. In my tests this change was roughly <strong>20% faster</strong> while being very cheap to compute.
+                    </p>
+
+                    <h3>AVX2 Ray Generation</h3>
+                    <p>
+                        After optimizing traversal, profiling exposed a slightly amusing bottleneck: generating the ray directions themselves.
+                    </p>
+                    <p>
+                        I took the underlying screen-to-world ray maths from Raylib/Raymath, stripped it down for this renderer, and vectorized it with AVX2. Instead of generating one direction at a time, the renderer calculates eight X/Y/Z components together using eight-wide 32-bit floating-point vectors.
+                    </p>
+                    <p>
+                        This was also a useful reminder that optimization is iterative: once one expensive stage becomes cheap enough, the bottleneck simply moves somewhere else.
+                    </p>
+
+                    <h3>Voxel LOD</h3>
+                    <p>
+                        I later added LOD to the voxel chunks themselves. Distant chunks do not need the same spatial resolution as nearby geometry, so increasingly large groups of voxels can be represented by a single value.
+                    </p>
+                    <p>
+                        The traversal structures follow the same rule. If a chunk is already represented at LOD 16, generating 8<sup>3</sup> and 4<sup>3</sup> distance layers cannot improve its effective precision, so those layers are never generated. This saves preprocessing time and memory without reducing the quality actually represented by that LOD.
+                    </p>
+
+                    <h3>Cached Voxel Lighting</h3>
+                    <div class="image-block">
+                        <img src="showcase/test.webp" alt="First Shadow Rendering">
+                        <span class="caption">First Shadows</span>
+                    </div>
+                    <p>
+                        For lighting I decided to cache per-voxel RGB values. This makes high-performance lighting considerably easier, and I also prefer the resulting look.
+                    </p>
+                    <p>
+                        Lighting uses an R8G8B8 representation. A value of zero represents uncalculated lighting, while the remaining byte range stores the quantized result. When a visible voxel has no cached lighting, I trace the required light or shadow ray and store the result. Later camera rays hitting the same voxel can simply read the cached RGB value instead of tracing another lighting ray.
+                    </p>
+                    <p>
+                        This trades memory for less repeated traversal and makes lighting naturally demand-driven. Because three bytes per voxel still becomes expensive over a large world, I'm also working on allocating the lighting arrays only when a chunk first needs them.
+                    </p>
+
+                    <h3>Quantizing the Distance Fields</h3>
+                    <p>
+                        The distance hierarchy itself is another significant consumer of memory, particularly the finest 4<sup>3</sup> level. Fortunately, traversal does not require arbitrary numerical precision; it needs a conservative value describing how far the ray can safely move.
+                    </p>
+                    <p>
+                        I therefore quantize the fine distance values. The important distinction is the direction of the error: a step that is too short only creates additional traversal work, while a step that is too long can skip geometry.
+                    </p>
+                    <p>
+                        In typical chunks this reduced storage for the finest distance-field level by approximately <strong>8x</strong>. Besides reducing total memory use, this also reduces cache pressure on data which is accessed constantly during traversal.
+                    </p>
+
+                    <hr>
+
+                    <div class="image-block">
+                        <img src="showcase/full.webp" alt="Completed Lighting with Diffusion and Scattering">
+                        <span class="caption">Completed Lighting with Diffusion and Scattering</span>
+                    </div>
+
+                    <h3>Where It Is Now</h3>
+                    <p>
+                        What started as a basic CPU ray marcher has gradually turned into a mixture of hierarchical traversal, temporal reuse, compressed acceleration data and CPU-specific optimization.
+                    </p>
+                    <p>
+                        None of this is intended to make an argument that CPU ray tracing should replace the GPU. The interesting part of the project has been watching the bottleneck continuously move: make traversal faster and memory access becomes visible; reduce memory traffic and ray generation becomes expensive; vectorize that and something else becomes the next problem.
+                    </p>
+
+                    <h3>Future Work</h3>
+                    <ul>
+                        <li><strong>Per-Chunk Palette Compression:</strong> Store compact local palette indices instead of full voxel material IDs where possible.</li>
+                        <li><strong>Incremental Chunk Generation:</strong> Spread distance-field, occupancy and LOD preprocessing across time instead of producing large stalls.</li>
+                        <li><strong>AVX2 Traversal:</strong> Vectorize the traversal itself. The arithmetic maps well to SIMD; the difficult part is handling ray divergence and inactive lanes efficiently.</li>
+                    </ul>
+
                 `
+            },
+            'physics_ca' : {
+                'title' : 'Cellular Automata And Rigid Bodies',
+                content: ''
             },
             'physics_pbd': {
                 title: "Physics: Position Based Dynamics",
@@ -354,14 +549,14 @@
                         </p>
 
                         <p>
-                            To keep things simple and readable for anyone following my logic, I’ve kept the project single-threaded, though it uses a few basic tricks to stay performant.
+                            To keep things simple and readable for anyone following my logic, I've kept the project single-threaded, though it uses a few basic tricks to stay performant.
                         </p>
 
                         <hr>
 
                         <h3>Spatial Partitioning</h3>
                         <p>
-                            In a naive physics engine, every object checks collisions with every other object. If you have 1,000 balls, that results in 1,000<sup>2</sup> (1,000,000) checks per frame. That’s wasteful when you can implement a simple <strong>chunk-based partitioning system</strong>.
+                            In a naive physics engine, every object checks collisions with every other object. If you have 1,000 balls, that results in 1,000<sup>2</sup> (1,000,000) checks per frame. That's wasteful when you can implement a simple <strong>chunk-based partitioning system</strong>.
                         </p>
                         <ul>
                             <li><strong>The Concept:</strong> Define a grid size (e.g., 40x40 units).</li>
@@ -380,7 +575,7 @@
 
                         <h3>Constraints and Friction</h3>
                         <p>
-                            The world boundaries are defined by the screen edges. When a ball hits a wall, I don’t simply reverse the velocity; I <strong>dampen the factor by -0.2</strong>. This simulates energy loss, as no real-world object is perfectly bouncy. 
+                            The world boundaries are defined by the screen edges. When a ball hits a wall, I don't simply reverse the velocity; I <strong>dampen the factor by -0.2</strong>. This simulates energy loss, as no real-world object is perfectly bouncy. 
                         </p>
                         <p>
                             I also implemented a small <strong>"sleep" threshold</strong>: if the velocity drops below a certain level, it snaps to 0 to prevent visual jittering.
@@ -401,19 +596,13 @@
                                 Your browser does not support the video tag.
                             </video>
                         </div>
+                        
+                        <a href="?id=physics_ca" class="back-link" style="margin-bottom: 0; padding: 10px 20px; border: 2px solid var(--text-color); background: var(--accent-color); color: #2D2F54; border-radius: 4px; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Read About Cellular Automata &gt;&gt;
+                        </a>
                     </article>
                 `
             },
-            'cagi': {
-                title: "CAGI Implementation",
-                content: `
-                    <p>Under construction. Details regarding Cellular Automata Global Illumination.</p>
-                    <div class="image-block">
-                        <img src="showcase/cagi.png" alt="CAGI Grid">
-                        <span class="caption">Visualization: Irradiance Propagation Map</span>
-                    </div>
-                `
-            }
         };
 
         function loadContent() {
